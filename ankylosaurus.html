@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анкілозавр — Енциклопедія</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Анкілозавр</h1>
+        <nav><a href="index.html">← На головну</a></nav>
+    </header>
+    <main>
+        <div class="article-container">
+            <div class="article-header">
+                <img src="https://dinoinfo.ru/wp-content/uploads/2020/09/IMG_20210105_203922.jpg" alt="Анкілозавр" class="article-img" onclick="openModal(this)">
+                <div>
+                    <h2>Анкілозавр (Ankylosaurus magniventris)</h2>
+                    <p>Зігнутий/Зрослий ящір • Родина Анкілозавриди</p>
+<button type="button" class="action-btn" onclick="toggleCompare(this, 'allosaurus')">⚖️ Порівняти</button>
+                </div>
+            </div>
+            <div class="info-box">
+                <p><strong>Геологічний період:</strong> Пізній крейдовий (68–66 млн років тому)</p>
+                <p><strong>Ареал (де мешкав):</strong> Північна Америка (штати Монтана, Вайомінг, Альберта в Канаді)</p>
+                <p><strong>Середовище існування:</strong> Густі прибережні ліси, заплави та вологі низовини</p>
+                <p><strong>Раціон:</strong> Травоїдний. Низькорослі папороті, чагарники, опалі фрукти та м'яке листя</p>
+                <p><strong>Розміри:</strong> Довжина 6–8 метрів, ширина тіла біля 1.5–2 м, маса від 4 до 8 тонн</p>
+            </div>
+            <h3>Супер-броня та хвостова булава</h3>
+            <p>Анкілозавр був справжнім живим танком. Його спина, боки та навіть повіки очей були покриті остеодермами — кістковими пластинами й шипами, врослими в шкіру. Найстрашнішою зброєю анкілозавра була масивна кісткова булава на кінці хвоста, підтримувана зрослими хребцями. Удар такої булави міг легко зламати кінцівку або пробити череп нападаючому хижаку, такому як тиранозавр.</p>
+
+            <br>
+            <h3>Спосіб життя та захисна тактика</h3>
+            <p>Через коротке приземкувате тіло й низьку швидкість бігу анкілозавр у разі небезпеки не тікав. Він притискався м'яким незахищеним черевом до землі, виставляючи назовні лише свій броньований панцир і активуючи хвіст-булаву, відмахуючись ним із боку в бік.</p>
+
+            <br>
+            <h3>Співіснування у пізньому крейді</h3>
+            <p>Анкілозавр мешкав у тих самих лісах формації Хелл-Крік, що й <strong>Тиранозавр Рекс</strong>, <strong>Трицератопс</strong>, купологоловий <strong>Пахицефалозавр</strong> та качконосі <strong>Едмонтозаври</strong>. У річках жили великі крокодили та прісноводні плезіозаври.</p>
+        </div>
+    </main>
+    <footer><p>© Енциклопедія Динозаврів</p></footer>
+    <!-- Повноекранне вікно для перегляду зображення -->
+<div id="imageModal" class="modal">
+    <span class="close-btn" onclick="closeModal()">Закрити &times;</span>
+    <img class="modal-content" id="imgFull">
+</div>
+<script>
+    // Функція відкриття фото на весь екран
+    function openModal(imgElement) {
+        let modal = document.getElementById("imageModal");
+        let modalImg = document.getElementById("imgFull");
+        
+        modal.style.display = "flex";
+        modalImg.src = imgElement.src;
+    }
+
+    // Функція закриття фото
+    function closeModal() {
+        let modal = document.getElementById("imageModal");
+        modal.style.display = "none";
+    }
+
+    // Закриття при кліку на будь-яке місце поза картинкою
+    window.onclick = function(event) {
+        let modal = document.getElementById("imageModal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+</body>
+</html>
