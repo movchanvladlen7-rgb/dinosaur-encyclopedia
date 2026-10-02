@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аллозавр — Енциклопедія</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Аллозавр</h1>
+        <nav><a href="index.html">← На головну</a></nav>
+    </header>
+    <main>
+        <div class="article-container">
+            <div class="article-header">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5-rVkUtSLhUDWz3smFyZ52_b4APzSgf_Vi_dYXjhQfqlWcySj2Rbu_TA&s=10" alt="Аллозавр" class="article-img" onclick="openModal(this)">
+                <div>
+                    <h2>Аллозавр (Allosaurus fragilis)</h2>
+                    <p>Дивний ящір • Родина Аллозавриди</p>
+                    <button type="button" class="action-btn" onclick="toggleCompare(this, 'allosaurus')">⚖️ Порівняти</button>
+                </div>
+            </div>
+            <div class="info-box">
+                <p><strong>Геологічний період:</strong> Пізній юрський (155–145 млн років тому)</p>
+                <p><strong>Ареал (де мешкав):</strong> Північна Америка, Португалія, Танзанія</p>
+                <p><strong>Середовище існування:</strong> Відкриті рівнини, савани та рідколісся</p>
+                <p><strong>Раціон та полювання:</strong> Хижак. Охотився на зауроподів (диплодоків, апатозаврів), стегозаврів та орнітоподів</p>
+                <p><strong>Розміри:</strong> Довжина 8.5–9.7 метрів (окремі екземпляри до 12 м), маса 2–3 тонни</p>
+            </div>
+            <h3>Анатомія та унікальний укус-«сокира»</h3>
+            <p>Аллозавр був найчисленнішим та найнебезпечнішим хижаком юрського періоду. На відміну від тиранозавра, сила укусу аллозавра була відносно слабкою (порівнянною з укусом сучасної леопардової кішки). Проте його череп міг витримувати колосальні вертикальні навантаження, а щелепи відкривалися під кутом 92 градуси. Аллозавр використовував верхню щелепу як бойову сокиру, завдаючи рубаючих ударів зубами по тілу здобичі та викликаючи кровотечу.</p>
+
+            <br>
+            <h3>Зграйне полювання</h3>
+            <p>Численні масові поховання аллозаврів (наприклад, кар'єр Клівленд-Ллойд у Юті) вказують на те, що ці хижаки могли об'єднуватися у зграї для полювання на гігантських зауроподів, таких як <strong>Диплодок</strong> або <strong>Камаразавр</strong>, яких неможливо було подолати самотужки.</p>
+
+            <br>
+            <h3>Екосистема юрського періоду</h3>
+            <p>Аллозавр домінував у формації Моррісон. Його головними конкурентами були рогатий <strong>Цератозавр</strong> та масивний <strong>Торвозавр</strong>. До здобичі аллозавра належали панцирний <strong>Стегозавр</strong>, прудкий <strong>Камптозавр</strong> та молодняк гігантських <strong>Брахіозаврів</strong>.</p>
+        </div>
+    </main>
+    <footer><p>© Енциклопедія Динозаврів</p></footer>
+    <!-- Повноекранне вікно для перегляду зображення -->
+<div id="imageModal" class="modal">
+    <span class="close-btn" onclick="closeModal()">Закрити &times;</span>
+    <img class="modal-content" id="imgFull">
+</div>
+<script>
+    // Функція відкриття фото на весь екран
+    function openModal(imgElement) {
+        let modal = document.getElementById("imageModal");
+        let modalImg = document.getElementById("imgFull");
+        
+        modal.style.display = "flex";
+        modalImg.src = imgElement.src;
+    }
+
+    // Функція закриття фото
+    function closeModal() {
+        let modal = document.getElementById("imageModal");
+        modal.style.display = "none";
+    }
+
+    // Закриття при кліку на будь-яке місце поза картинкою
+    window.onclick = function(event) {
+        let modal = document.getElementById("imageModal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+</body>
+</html>
