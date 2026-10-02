@@ -1,0 +1,2398 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Енциклопедія Динозаврів</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Система порівняння -->
+    <script src="compare.js" defer></script>
+
+</head>
+<body>
+
+    <!-- Хедер с расширенными фильтрами -->
+    <header>
+        <div class="header-content">
+            <h1>Світ Динозаврів</h1>
+            <div class="controls-container">
+                <div class="sort-box">
+                    <label for="dinoSort">Сортувати:</label>
+                    <select id="dinoSort" onchange="filterAndSortDinos()">
+                        <option value="default">За замовчуванням</option>
+                        <option value="az">Від А до Я</option>
+                        <option value="za">Від Я до А</option>
+                    </select>
+
+                    <label for="epochFilter">Епоха:</label>
+                    <select id="epochFilter" onchange="filterAndSortDinos()">
+                        <option value="all">Усі періоди</option>
+                        <option value="крейдовий">Крейдовий період</option>
+                        <option value="юрський">Юрський період</option>
+                    </select>
+
+                    <label for="dietFilter">Раціон:</label>
+                    <select id="dietFilter" onchange="filterAndSortDinos()">
+                        <option value="all">Усі раціони</option>
+                        <option value="хижак">🥩 Хижаки</option>
+                        <option value="травоїдний">🌿 Травоїдні</option>
+                        <option value="всеїдний">🌿🥩 Всеїдні</option>
+                    </select>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" id="dinoSearch" placeholder="Пошук динозавра..." onkeyup="filterAndSortDinos()">
+                </div>
+
+                <!-- Блок быстрых экшенов (Рандом и Сравнение) -->
+                <div class="quick-actions">
+                    <button type="button" class="action-btn" onclick="getRandomDino()">🎲 Випадковий динозавр</button>
+                    <button type="button" class="action-btn compare-open-btn" onclick="openCompareModal()">⚖️ Порівняння (<span id="compareCount">0</span>/2)</button>
+                </div>
+
+                <p id="searchCount" class="search-count">Знайдено: 36 динозаврів</p>
+            </div>
+        </div>
+        <div class="top-controls">
+    <button id="themeToggleBtn" class="control-btn" title="Переключить тему">
+      <span id="themeIcon">🌙</span> <span id="themeText">Темная тема</span>
+    </button>
+    
+    <button id="favFilterBtn" class="control-btn" onclick="toggleFavFilter()">
+      ⭐ Избранное (<span id="favCount">0</span>)
+    </button>
+  </div>
+
+  <nav>
+    <a href="index.html">На головну</a>
+  </nav>
+    </header>
+
+    <!-- Модальное окно для информации о динозавре -->
+    <div id="dinoModal" class="modal" style="display: none;">
+        <div class="modal-card">
+            <span class="modal-close" onclick="closeDinoModal()">&times;</span>
+            <img id="dinoModalImg" src="" alt="" class="modal-dino-img">
+            <h2 id="dinoModalTitle"></h2>
+            <p id="dinoModalType" class="modal-badge"></p>
+            <p id="dinoModalDesc"></p>
+        </div>
+    </div>
+
+    <!-- Плавающая кнопка «Наверх» -->
+    <button id="scrollTopBtn" onclick="scrollToTop()">⬆</button>
+
+    <!-- Секция: Карта регионов динозавров -->
+    <section id="habitat-map-section" class="map-container">
+        <h2>Географічні ареали динозаврів</h2>
+        <p class="map-description">Інтерактивна карта розкопок та природних місць проживання різних видів мезозойської ери.</p>
+
+        <div class="map-wrapper">
+            <img src="https://i.postimg.cc/63ZXHp2K/Map-Chart-Map-(4).png" alt="Карта ареалів проживання динозаврів" class="interactive-map image-modal-trigger">
+        </div>
+
+        <!-- Легенда карты -->
+        <div class="map-legend-container">
+            <div class="legend-header-wrapper">
+                <h3 class="legend-title">🗺️ Легенда карти: Регіони та Динозаври</h3>
+                <button id="toggleLegendBtn" class="toggle-btn" onclick="toggleLegend()">👁️ Сховати регіони</button>
+            </div>
+
+            <div id="legendContent" class="legend-content">
+                <div class="legend-search">
+                    <input type="text" id="regionSearch" onkeyup="filterRegions()" placeholder="🔍 Пошук за країною, штатом або динозавром...">
+                </div>
+
+                <div class="regions-grid" id="regionsGrid">
+                    <!-- US США -->
+                    <div class="region-card" data-search="США Alaska Аляска Nanuqsaurus">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #E3F2FD;"></span>
+                            <h3>us США – Аляска (Alaska)</h3>
+                        </div>
+                        <p class="dino-count">1 динозавр</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Nanuqsaurus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('alaska')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="США Utah Юта Allosaurus Apatosaurus Ceratosaurus Diplodocus Dryosaurus Parasaurolophus Stegosaurus Utahraptor">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #A000FF;"></span>
+                            <h3>us США – Юта (Utah)</h3>
+                        </div>
+                        <p class="dino-count">8 динозаврів</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Allosaurus</span>
+                            <span class="dino-tag">Apatosaurus</span>
+                            <span class="dino-tag">Ceratosaurus</span>
+                            <span class="dino-tag">Diplodocus</span>
+                            <span class="dino-tag">Dryosaurus</span>
+                            <span class="dino-tag">Parasaurolophus</span>
+                            <span class="dino-tag">Stegosaurus</span>
+                            <span class="dino-tag">Utahraptor</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('utah')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="США Colorado Колорадо Allosaurus Apatosaurus Brachiosaurus Ceratosaurus Diplodocus Dryosaurus Stegosaurus Triceratops">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #FFEA00;"></span>
+                            <h3>us США – Колорадо (Colorado)</h3>
+                        </div>
+                        <p class="dino-count">8 динозаврів</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Allosaurus</span>
+                            <span class="dino-tag">Apatosaurus</span>
+                            <span class="dino-tag">Brachiosaurus</span>
+                            <span class="dino-tag">Ceratosaurus</span>
+                            <span class="dino-tag">Diplodocus</span>
+                            <span class="dino-tag">Dryosaurus</span>
+                            <span class="dino-tag">Stegosaurus</span>
+                            <span class="dino-tag">Triceratops</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('colorado')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="США Wyoming Вайомінг Allosaurus Ankylosaurus Apatosaurus Ceratosaurus Deinonychus Diplodocus Dryosaurus Nodosaurus Pachycephalosaurus Stegosaurus Triceratops Tyrannosaurus">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #00E676;"></span>
+                            <h3>us США – Вайомінг (Wyoming)</h3>
+                        </div>
+                        <p class="dino-count">12 динозаврів</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Allosaurus</span>
+                            <span class="dino-tag">Ankylosaurus</span>
+                            <span class="dino-tag">Apatosaurus</span>
+                            <span class="dino-tag">Ceratosaurus</span>
+                            <span class="dino-tag">Deinonychus</span>
+                            <span class="dino-tag">Diplodocus</span>
+                            <span class="dino-tag">Dryosaurus</span>
+                            <span class="dino-tag">Nodosaurus</span>
+                            <span class="dino-tag">Pachycephalosaurus</span>
+                            <span class="dino-tag">Stegosaurus</span>
+                            <span class="dino-tag">Triceratops</span>
+                            <span class="dino-tag">Tyrannosaurus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('wyoming')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="США Montana Монтана Ankylosaurus Corythosaurus Deinonychus Pachycephalosaurus Triceratops Tyrannosaurus Maiasaura">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #00B0FF;"></span>
+                            <h3>us США – Монтана (Montana)</h3>
+                        </div>
+                        <p class="dino-count">7 динозаврів</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Ankylosaurus</span>
+                            <span class="dino-tag">Corythosaurus</span>
+                            <span class="dino-tag">Deinonychus</span>
+                            <span class="dino-tag">Maiasaura</span>
+                            <span class="dino-tag">Pachycephalosaurus</span>
+                            <span class="dino-tag">Triceratops</span>
+                            <span class="dino-tag">Tyrannosaurus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('montana')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="США South Dakota Південна Дакота Pachycephalosaurus Pteranodon Triceratops Tyrannosaurus">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #0029FF;"></span>
+                            <h3>us США – Південна Дакота (South Dakota)</h3>
+                        </div>
+                        <p class="dino-count">4 динозаври</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Pachycephalosaurus</span>
+                            <span class="dino-tag">Pteranodon</span>
+                            <span class="dino-tag">Triceratops</span>
+                            <span class="dino-tag">Tyrannosaurus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('south-dakota')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="США North Dakota Північна Дакота Triceratops Tyrannosaurus">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #2979FF;"></span>
+                            <h3>us США – Північна Дакота (North Dakota)</h3>
+                        </div>
+                        <p class="dino-count">2 динозаври</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Triceratops</span>
+                            <span class="dino-tag">Tyrannosaurus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('north-dakota')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="США New Mexico Нью-Мексико Diplodocus Parasaurolophus">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #8D6E63;"></span>
+                            <h3>us США – Нью-Мексико (New Mexico)</h3>
+                        </div>
+                        <p class="dino-count">2 динозаври</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Diplodocus</span>
+                            <span class="dino-tag">Parasaurolophus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('new-mexico')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="США Oklahoma Оклахома Deinonychus">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #00E5FF;"></span>
+                            <h3>us США – Оклахома (Oklahoma)</h3>
+                        </div>
+                        <p class="dino-count">1 динозавр</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Deinonychus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('oklahoma')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="США Kansas Канзас Pteranodon">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #FF007F;"></span>
+                            <h3>us США – Канзас (Kansas)</h3>
+                        </div>
+                        <p class="dino-count">1 динозавр</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Pteranodon</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('kansas')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="США New Jersey Нью-Джерсі Maryland Мериленд Hadrosaurus Deinonychus">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #E040FB;"></span>
+                            <h3>us США – Нью-Джерсі та Мериленд</h3>
+                        </div>
+                        <p class="dino-count">2 динозаври</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Hadrosaurus</span>
+                            <span class="dino-tag">Deinonychus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('east-usa')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <!-- CA КАНАДА -->
+                    <div class="region-card" data-search="Канада Alberta Альберта Ankylosaurus Corythosaurus Pachycephalosaurus Parasaurolophus Triceratops Tyrannosaurus">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #00FF66;"></span>
+                            <h3>ca Канада – Альберта (Alberta)</h3>
+                        </div>
+                        <p class="dino-count">6 динозаврів</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Ankylosaurus</span>
+                            <span class="dino-tag">Corythosaurus</span>
+                            <span class="dino-tag">Pachycephalosaurus</span>
+                            <span class="dino-tag">Parasaurolophus</span>
+                            <span class="dino-tag">Triceratops</span>
+                            <span class="dino-tag">Tyrannosaurus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('alberta')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="Канада Saskatchewan Саскачеван Ankylosaurus Triceratops">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #F3E5F5;"></span>
+                            <h3>ca Канада – Саскачеван (Saskatchewan)</h3>
+                        </div>
+                        <p class="dino-count">2 динозаври</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Ankylosaurus</span>
+                            <span class="dino-tag">Triceratops</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('saskatchewan')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <!-- EU ЕВРОПА -->
+                    <div class="region-card" data-search="Португалія Portugal Allosaurus Baryonyx Ceratosaurus Stegosaurus Compsognathus">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #FF9100;"></span>
+                            <h3>pt Португалія (Portugal)</h3>
+                        </div>
+                        <p class="dino-count">5 динозаврів</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Allosaurus</span>
+                            <span class="dino-tag">Baryonyx</span>
+                            <span class="dino-tag">Ceratosaurus</span>
+                            <span class="dino-tag">Stegosaurus</span>
+                            <span class="dino-tag">Compsognathus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('portugal')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="Іспанія Spain Baryonyx Diplodocus Iguanodon">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #FF6D00;"></span>
+                            <h3>es Іспанія (Spain)</h3>
+                        </div>
+                        <p class="dino-count">3 динозаври</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Baryonyx</span>
+                            <span class="dino-tag">Diplodocus</span>
+                            <span class="dino-tag">Iguanodon</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('spain')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="Великобританія Англія England Baryonyx Iguanodon">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #FFAB40;"></span>
+                            <h3>gb Великобританія (England)</h3>
+                        </div>
+                        <p class="dino-count">2 динозаври</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Baryonyx</span>
+                            <span class="dino-tag">Iguanodon</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('england')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="Німеччина Germany Баварія Bavaria Compsognathus Iguanodon">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #00BFA5;"></span>
+                            <h3>de Німеччина (Bavaria)</h3>
+                        </div>
+                        <p class="dino-count">2 динозаври</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Compsognathus</span>
+                            <span class="dino-tag">Iguanodon</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('germany')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="Франція France Var Compsognathus">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #651FFF;"></span>
+                            <h3>fr Франція (Var)</h3>
+                        </div>
+                        <p class="dino-count">1 динозавр</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Compsognathus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('france')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="Бельгія Belgium Hainaut Iguanodon">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #00897B;"></span>
+                            <h3>be Бельгія (Hainaut)</h3>
+                        </div>
+                        <p class="dino-count">1 динозавр</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Iguanodon</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('belgium')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <!-- AR ЮЖНАЯ АМЕРИКА -->
+                    <div class="region-card" data-search="Аргентина Argentina Neuquén Chubut Giganotosaurus Mapusaurus Carnotaurus">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #D50000;"></span>
+                            <h3>ar Аргентина (Neuquén & Chubut)</h3>
+                        </div>
+                        <p class="dino-count">3 динозаври</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Giganotosaurus</span>
+                            <span class="dino-tag">Mapusaurus</span>
+                            <span class="dino-tag">Carnotaurus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('argentina')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <!-- AS АЗИЯ -->
+                    <div class="region-card" data-search="Китай China Liaoning Sichuan Inner Mongolia Chaoyangsaurus Yutyrannus Shunosaurus Velociraptor">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #0277BD;"></span>
+                            <h3>cn Китай (Liaoning, Sichuan, Inner Mongolia)</h3>
+                        </div>
+                        <p class="dino-count">4 динозаври</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Chaoyangsaurus</span>
+                            <span class="dino-tag">Yutyrannus</span>
+                            <span class="dino-tag">Shunosaurus</span>
+                            <span class="dino-tag">Velociraptor</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('china')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="Монголія Mongolia Gallimimus Oviraptor Therizinosaurus Velociraptor Yamaceratops">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #00ACC1;"></span>
+                            <h3>mn Монголія (Mongolia)</h3>
+                        </div>
+                        <p class="dino-count">5 динозаврів</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Gallimimus</span>
+                            <span class="dino-tag">Oviraptor</span>
+                            <span class="dino-tag">Therizinosaurus</span>
+                            <span class="dino-tag">Velociraptor</span>
+                            <span class="dino-tag">Yamaceratops</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('mongolia')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="Індія India Gujarat Madhya Pradesh Rajasaurus">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #004D40;"></span>
+                            <h3>in Індія (Gujarat & Madhya Pradesh)</h3>
+                        </div>
+                        <p class="dino-count">1 динозавр</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Rajasaurus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('india')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <!-- 🌍 АФРИКА & МАДАГАСКАР -->
+                    <div class="region-card" data-search="Мадагаскар Madagascar Mahajanga Majungasaurus">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #880E4F;"></span>
+                            <h3>mg Мадагаскар (Mahajanga)</h3>
+                        </div>
+                        <p class="dino-count">1 динозавр</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Majungasaurus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('madagascar')">🗺️ Показати на карті</button>
+                    </div>
+
+                    <div class="region-card" data-search="Північна Африка Марокко Алжир Туніс Нігер Єгипет Spinosaurus Morocco Algeria Tunisia Niger Egypt">
+                        <div class="region-header">
+                            <span class="color-badge" style="background-color: #76FF03;"></span>
+                            <h3>🌍 Північна Африка (Spinosaurus Zone)</h3>
+                        </div>
+                        <p class="dino-count">1 ареал (Spinosaurus)</p>
+                        <div class="dino-tags">
+                            <span class="dino-tag">Spinosaurus</span>
+                        </div>
+                        <button class="map-jump-btn" onclick="highlightRegionOnMap('africa')">🗺️ Показати на карті</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Главный контейнер всех 36 динозавров -->
+    <main>
+        <div class="dino-grid" id="dinoGrid">
+
+            <!-- 1. Аллозавр -->
+            <div class="dino-card">
+                <a href="allosaurus.html" class="dino-link">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5-rVkUtSLhUDWz3smFyZ52_b4APzSgf_Vi_dYXjhQfqLwcySj2Rbu_TA&s=10" alt="Аллозавр" class="dino-img">
+                    <h3>Аллозавр</h3>
+                </a>
+                <p>Хижак • Юрський період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Аллозавр', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5-rVkUtSLhUDWz3smFyZ52_b4APzSgf_Vi_dYXjhQfqLwcySj2Rbu_TA&s=10', 'Хижак • Юрський період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 2. Анкілозавр -->
+            <div class="dino-card">
+                <a href="ankylosaurus.html" class="dino-link">
+                    <img src="https://dinoinfo.ru/wp-content/uploads/2020/09/IMG_20210105_203922.jpg" alt="Анкілозавр" class="dino-img">
+                    <h3>Анкілозавр</h3>
+                </a>
+                <p>Травоїдний • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Анкілозавр', 'https://dinoinfo.ru/wp-content/uploads/2020/09/IMG_20210105_203922.jpg', 'Травоїдний • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 3. Апатозавр -->
+            <div class="dino-card">
+                <a href="apatosaurus.html" class="dino-link">
+                    <img src="https://media.istockphoto.com/id/1872381255/ru/%D1%84%D0%BE%D1%82%D0%BE/%D0%B4%D0%B8%D0%BD%D0%BE%D0%B7%D0%B0%D0%B2%D1%80-%D0%B1%D1%80%D0%B0%D1%85%D0%B8%D0%BE%D0%B7%D0%B0%D0%B2%D1%80-%D0%B2-%D0%BF%D1%80%D0%B8%D1%80%D0%BE%D0%B4%D0%B5.jpg?s=612x612&w=0&k=20&c=PLdM49nzWvcF9Ctfd271WZ87PjuE_WnrE9T0Cg-wyq4=" alt="Апатозавр" class="dino-img">
+                    <h3>Апатозавр</h3>
+                </a>
+                <p>Травоїдний • Юрський період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Апатозавр', 'https://media.istockphoto.com/id/1872381255/ru/%D1%84%D0%BE%D1%82%D0%BE/%D0%B4%D0%B8%D0%BD%D0%BE%D0%B7%D0%B0%D0%B2%D1%80-%D0%B1%D1%80%D0%B0%D1%85%D0%B8%D0%BE%D0%B7%D0%B0%D0%B2%D1%80-%D0%B2-%D0%BF%D1%80%D0%B8%D1%80%D0%BE%D0%B4%D0%B5.jpg?s=612x612&w=0&k=20&c=PLdM49nzWvcF9Ctfd271WZ87PjuE_WnrE9T0Cg-wyq4=', 'Травоїдний • Юрський період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 4. Баріонікс -->
+            <div class="dino-card">
+                <a href="baryonyx.html" class="dino-link">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1xc-yoa0JLAKYL7USAN45mmlzSV1EH0wFygJC9z4f1Q&s=10" alt="Баріонікс" class="dino-img">
+                    <h3>Баріонікс</h3>
+                </a>
+                <p>Хижак • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Баріонікс', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1xc-yoa0JLAKYL7USAN45mmlzSV1EH0wFygJC9z4f1Q&s=10', 'Хижак • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 5. Брахіозавр -->
+            <div class="dino-card">
+                <a href="brachiosaurus.html" class="dino-link">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvkea8R_ouGipDMrnxBWegCyBGaCqn8pHKYf2mYgcsrQlgxgAgLJ9sISUi&s=10" alt="Брахіозавр" class="dino-img">
+                    <h3>Брахіозавр</h3>
+                </a>
+                <p>Травоїдний • Юрський період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Брахіозавр', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvkea8R_ouGipDMrnxBWegCyBGaCqn8pHKYf2mYgcsrQlgxgAgLJ9sISUi&s=10', 'Травоїдний • Юрський період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 6. Велоцираптор -->
+            <div class="dino-card">
+                <a href="velociraptor.html" class="dino-link">
+                    <img src="https://creacenter.org/images/ARTICLES/Dinos/Velociraptor/Velociraptor3.jpg" alt="Велоцираптор" class="dino-img">
+                    <h3>Велоцираптор</h3>
+                </a>
+                <p>Хижак • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Велоцираптор', 'https://creacenter.org/images/ARTICLES/Dinos/Velociraptor/Velociraptor3.jpg', 'Хижак • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 7. Галімім -->
+            <div class="dino-card">
+                <a href="gallimimus.html" class="dino-link">
+                    <img src="https://preview.redd.it/gallimimus-first-look-v0-xyt9zoeo844f1.png?width=640&crop=smart&auto=webp&s=e518aca0f59c21233830ddecb870f55d7fcda125" alt="Галімім" class="dino-img">
+                    <h3>Галімім</h3>
+                </a>
+                <p>Всеїдний • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Галімім', 'https://preview.redd.it/gallimimus-first-look-v0-xyt9zoeo844f1.png?width=640&crop=smart&auto=webp&s=e518aca0f59c21233830ddecb870f55d7fcda125', 'Всеїдний • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 8. Гіганотозавр -->
+            <div class="dino-card">
+                <a href="giganotosaurus.html" class="dino-link">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Giganotos_Db.jpg?utm_source=ru.wikipedia.org&utm_campaign=index&utm_content=original" alt="Гіганотозавр" class="dino-img">
+                    <h3>Гіганотозавр</h3>
+                </a>
+                <p>Хижак • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Гіганотозавр', 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Giganotos_Db.jpg?utm_source=ru.wikipedia.org&utm_campaign=index&utm_content=original', 'Хижак • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 9. Гадрозавр -->
+            <div class="dino-card">
+                <a href="hadrosaurus.html" class="dino-link">
+                    <img src="https://s11.stc.yc.kpcdn.net/share/i/12/11260329/wr-960.webp" alt="Гадрозавр" class="dino-img">
+                    <h3>Гадрозавр</h3>
+                </a>
+                <p>Травоїдний • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Гадрозавр', 'https://s11.stc.yc.kpcdn.net/share/i/12/11260329/wr-960.webp', 'Травоїдний • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 10. Дейноніх -->
+            <div class="dino-card">
+                <a href="deinonychus.html" class="dino-link">
+                    <img src="https://creacenter.org/images/ARTICLES/Dinos/Deynonyh/a_1234007588_salireths_-_deinonih.jpg" alt="Дейноніх" class="dino-img">
+                    <h3>Дейноніх</h3>
+                </a>
+                <p>Хижак • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Дейноніх', 'https://creacenter.org/images/ARTICLES/Dinos/Deynonyh/a_1234007588_salireths_-_deinonih.jpg', 'Хижак • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 11. Диплодок -->
+            <div class="dino-card">
+                <a href="diplodocus.html" class="dino-link">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdtC6qz7H1Kpa2gviDV40YzAuleUH5BflG7LPPXiGu-fr1fjtG-o-aqmI&s=10" alt="Диплодок" class="dino-img">
+                    <h3>Диплодок</h3>
+                </a>
+                <p>Травоїдний • Юрський період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Диплодок', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdtC6qz7H1Kpa2gviDV40YzAuleUH5BflG7LPPXiGu-fr1fjtG-o-aqmI&s=10', 'Травоїдний • Юрський період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 12. Дріозавр -->
+            <div class="dino-card">
+                <a href="dryosaurus.html" class="dino-link">
+                    <img src="https://dinoinfo.ru/wp-content/uploads/2021/01/IMG_20210103_203308.jpg" alt="Дріозавр" class="dino-img">
+                    <h3>Дріозавр</h3>
+                </a>
+                <p>Травоїдний • Юрський період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Дріозавр', 'https://dinoinfo.ru/wp-content/uploads/2021/01/IMG_20210103_203308.jpg', 'Травоїдний • Юрський період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 13. Ігуанодон -->
+            <div class="dino-card">
+                <a href="iguanodon.html" class="dino-link">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUDTs3wEQHAcn4b49Lb0MuLyEqls0bwnZtHNTGRiVwZw&s=10" alt="Ігуанодон" class="dino-img">
+                    <h3>Ігуанодон</h3>
+                </a>
+                <p>Травоїдний • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Ігуанодон', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUDTs3wEQHAcn4b49Lb0MuLyEqls0bwnZtHNTGRiVwZw&s=10', 'Травоїдний • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 14. Карнотавр -->
+            <div class="dino-card">
+                <a href="carnotaurus.html" class="dino-link">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNfF3Eb8WjVGZnYJjkys7b-FE_4UHCneYZWQ45L1gx8xA13fGEt7cLxczl&s=10" alt="Карнотавр" class="dino-img">
+                    <h3>Карнотавр</h3>
+                </a>
+                <p>Хижак • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Карнотавр', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNfF3Eb8WjVGZnYJjkys7b-FE_4UHCneYZWQ45L1gx8xA13fGEt7cLxczl&s=10', 'Хижак • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 15. Компсогнат -->
+            <div class="dino-card">
+                <a href="compsognathus.html" class="dino-link">
+                    <img src="https://bulqyzyq.kz/wp-content/uploads/2024/08/kompsognatah.jpeg" alt="Компсогнат" class="dino-img">
+                    <h3>Компсогнат</h3>
+                </a>
+                <p>Хижак • Юрський період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Компсогнат', 'https://bulqyzyq.kz/wp-content/uploads/2024/08/kompsognatah.jpeg', 'Хижак • Юрський період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 16. Коритозавр -->
+            <div class="dino-card">
+                <a href="corythosaurus.html" class="dino-link">
+                    <img src="https://web-zoopark.ru/media/korythosaur%20copy.gif" alt="Коритозавр" class="dino-img">
+                    <h3>Коритозавр</h3>
+                </a>
+                <p>Травоїдний • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Коритозавр', 'https://web-zoopark.ru/media/korythosaur%20copy.gif', 'Травоїдний • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 17. Майазавра -->
+            <div class="dino-card">
+                <a href="maiasaura.html" class="dino-link">
+                    <img src="https://i.playground.ru/i/pix/2687242/image.jpg" alt="Майазавра" class="dino-img">
+                    <h3>Майазавра</h3>
+                </a>
+                <p>Травоїдний • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Майазавра', 'https://i.playground.ru/i/pix/2687242/image.jpg', 'Травоїдний • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 18. Мапузавр -->
+            <div class="dino-card">
+                <a href="mapusaurus.html" class="dino-link">
+                    <img src="https://preview.redd.it/mapusaurus-and-meraxes-the-2-giant-carcharodontosaurus-from-v0-6v95deg8d4aa1.jpg?width=640&crop=smart&auto=webp&s=a90013d81d72b28ec07e60135ec9623a6805b154" alt="Мапузавр" class="dino-img">
+                    <h3>Мапузавр</h3>
+                </a>
+                <p>Хижак • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Мапузавр', 'https://preview.redd.it/mapusaurus-and-meraxes-the-2-giant-carcharodontosaurus-from-v0-6v95deg8d4aa1.jpg?width=640&crop=smart&auto=webp&s=a90013d81d72b28ec07e60135ec9623a6805b154', 'Хижак • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 19. Нанукзавр -->
+            <div class="dino-card">
+                <a href="nanuqsaurus.html" class="dino-link">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4-DT1xrXhC47M77BEQ2Xcnt56I6QJ2d4TCDfB_KoMKI-TSj_g3xvWVXEM&s=10" alt="Нанукзавр" class="dino-img">
+                    <h3>Нанукзавр</h3>
+                </a>
+                <p>Хижак • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Нанукзавр', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4-DT1xrXhC47M77BEQ2Xcnt56I6QJ2d4TCDfB_KoMKI-TSj_g3xvWVXEM&s=10', 'Хижак • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 20. Нодозавр -->
+            <div class="dino-card">
+                <a href="nodosaurus.html" class="dino-link">
+                    <img src="https://i.playground.ru/i/pix/2687247/image.jpg" alt="Нодозавр" class="dino-img">
+                    <h3>Нодозавр</h3>
+                </a>
+                <p>Травоїдний • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Нодозавр', 'https://i.playground.ru/i/pix/2687247/image.jpg', 'Травоїдний • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 21. Овіраптор -->
+            <div class="dino-card">
+                <a href="oviraptor.html" class="dino-link">
+                    <img src="https://dinozavrikus.ru/editorial/oviraptor.jpeg" alt="Овіраптор" class="dino-img">
+                    <h3>Овіраптор</h3>
+                </a>
+                <p>Всеїдний • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Овіраптор', 'https://dinozavrikus.ru/editorial/oviraptor.jpeg', 'Всеїдний • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 22. Паразауролоф -->
+            <div class="dino-card">
+                <a href="parasaurolophus.html" class="dino-link">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTefLrDvjKBK69frZLwlk5faPHLGn1oW0IEjhNGQebJJA&s=10" alt="Паразауролоф" class="dino-img">
+                    <h3>Паразауролоф</h3>
+                </a>
+                <p>Травоїдний • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Паразауролоф', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTefLrDvjKBK69frZLwlk5faPHLGn1oW0IEjhNGQebJJA&s=10', 'Травоїдний • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 23. Пахицефалозавр -->
+            <div class="dino-card">
+                <a href="pachycephalosaurus.html" class="dino-link">
+                    <img src="https://storage.yandexcloud.net/storage.yasno.media/nat-geo/images/2022/11/9/0b2462347e184368b6c93c1cfe7b91bf.max-1200x800.png" alt="Пахицефалозавр" class="dino-img">
+                    <h3>Пахицефалозавр</h3>
+                </a>
+                <p>Травоїдний • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Пахицефалозавр', 'https://storage.yandexcloud.net/storage.yasno.media/nat-geo/images/2022/11/9/0b2462347e184368b6c93c1cfe7b91bf.max-1200x800.png', 'Травоїдний • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 24. Птеранодон -->
+            <div class="dino-card">
+                <a href="pteranodon.html" class="dino-link">
+                    <img src="https://discovery.v.ua/wp-content/uploads/2025/07/fakty-pro-pteranodona.jpg" alt="Птеранодон" class="dino-img">
+                    <h3>Птеранодон</h3>
+                </a>
+                <p>Птерозавр • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Птеранодон', 'https://discovery.v.ua/wp-content/uploads/2025/07/fakty-pro-pteranodona.jpg', 'Птерозавр • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 25. Раджазавр -->
+            <div class="dino-card">
+                <a href="rajasaurus.html" class="dino-link">
+                    <img src="https://fbi.cults3d.com/uploaders/40113270/illustration-file/eb6026b4-1e72-4ed3-ac76-b100fd0ed9bb/1.png" alt="Раджазавр" class="dino-img">
+                    <h3>Раджазавр</h3>
+                </a>
+                <p>Хижак • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Раджазавр', 'https://fbi.cults3d.com/uploaders/40113270/illustration-file/eb6026b4-1e72-4ed3-ac76-b100fd0ed9bb/1.png', 'Хижак • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 26. Спінозавр -->
+            <div class="dino-card">
+                <a href="spinosaurus.html" class="dino-link">
+                    <img src="https://media.istockphoto.com/id/146818770/ru/%D1%84%D0%BE%D1%82%D0%BE/%D0%B4%D0%BE%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F-%D1%81%D1%86%D0%B5%D0%BD%D1%8B-%D1%81-spinosaurus-%D0%B8-psittacosaurus-%D0%B4%D0%B8%D0%BD%D0%BE%D0%B7%D0%B0%D0%B2%D1%80%D0%BE%D0%B2.jpg?s=612x612&w=0&k=20&c=snFjh8JhQwa5NSwSMEw2JTpPK5ORSEDqiQyKcq-qsr4=" alt="Спінозавр" class="dino-img">
+                    <h3>Спінозавр</h3>
+                </a>
+                <p>Хижак • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Спінозавр', 'https://media.istockphoto.com/id/146818770/ru/%D1%84%D0%BE%D1%82%D0%BE/%D0%B4%D0%BE%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F-%D1%81%D1%86%D0%B5%D0%BD%D1%8B-%D1%81-spinosaurus-%D0%B8-psittacosaurus-%D0%B4%D0%B8%D0%BD%D0%BE%D0%B7%D0%B0%D0%B2%D1%80%D0%BE%D0%B2.jpg?s=612x612&w=0&k=20&c=snFjh8JhQwa5NSwSMEw2JTpPK5ORSEDqiQyKcq-qsr4=', 'Хижак • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 27. Стегозавр -->
+            <div class="dino-card">
+                <a href="stegosaurus.html" class="dino-link">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9NK2gVWVmfJD4GP8-sE5TuarfYciD8MvjK7c8acssUK-ztY6LRekfutE&s=10" alt="Стегозавр" class="dino-img">
+                    <h3>Стегозавр</h3>
+                </a>
+                <p>Травоїдний • Юрський період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Стегозавр', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9NK2gVWVmfJD4GP8-sE5TuarfYciD8MvjK7c8acssUK-ztY6LRekfutE&s=10', 'Травоїдний • Юрський період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 28. Теризинозавр -->
+            <div class="dino-card">
+                <a href="therizinosaurus.html" class="dino-link">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmT9eyY-eNDD8XtFFvnJkz7pLKJ23abBww_cuADBdfW5JFF8vGfKDDkkGf&s=10" alt="Теризинозавр" class="dino-img">
+                    <h3>Теризинозавр</h3>
+                </a>
+                <p>Травоїдний • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Теризинозавр', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmT9eyY-eNDD8XtFFvnJkz7pLKJ23abBww_cuADBdfW5JFF8vGfKDDkkGf&s=10', 'Травоїдний • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 29. Тиранозавр Рекс -->
+            <div class="dino-card">
+                <a href="tyrannosaurus.html" class="dino-link">
+                    <img src="https://focus.ua/static/storage/thumbs/740x/6/b2/3b7uwa-dfe2935e41bef87b6058fc832e309b26.jpg" alt="Тиранозавр Рекс" class="dino-img">
+                    <h3>Тиранозавр Рекс</h3>
+                </a>
+                <p>Хижак • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Тиранозавр Рекс', 'https://focus.ua/static/storage/thumbs/740x/6/b2/3b7uwa-dfe2935e41bef87b6058fc832e309b26.jpg', 'Хижак • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 30. Трицератопс -->
+            <div class="dino-card">
+                <a href="triceratops.html" class="dino-link">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Triceratops_liveDB.jpg/1280px-Triceratops_liveDB.jpg?utm_source=ru.wikipedia.org&utm_campaign=index&utm_content=thumbnail" alt="Трицератопс" class="dino-img">
+                    <h3>Трицератопс</h3>
+                </a>
+                <p>Травоїдний • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Трицератопс', 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Triceratops_liveDB.jpg/1280px-Triceratops_liveDB.jpg?utm_source=ru.wikipedia.org&utm_campaign=index&utm_content=thumbnail', 'Травоїдний • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 31. Цератозавр -->
+            <div class="dino-card">
+                <a href="ceratosaurus.html" class="dino-link">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnF4qwrhWy4CrXDJFUQqbOYShBtKTulgdPlABY9v1xyJI6kboD_U5umQ&s=10" alt="Цератозавр" class="dino-img">
+                    <h3>Цератозавр</h3>
+                </a>
+                <p>Хижак • Юрський період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Цератозавр', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnF4qwrhWy4CrXDJFUQqbOYShBtKTulgdPlABY9v1xyJI6kboD_U5umQ&s=10', 'Хижак • Юрський період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 32. Чаоянзавр -->
+            <div class="dino-card">
+                <a href="chaoyangsaurus.html" class="dino-link">
+                    <img src="https://dinozavrikus.ru/editorial/aquilops.jpeg" alt="Чаоянзавр" class="dino-img">
+                    <h3>Чаоянзавр</h3>
+                </a>
+                <p>Травоїдний • Юрський період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Чаоянзавр', 'https://dinozavrikus.ru/editorial/aquilops.jpeg', 'Травоїдний • Юрський період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 33. Шунозавр -->
+            <div class="dino-card">
+                <a href="shunosaurus.html" class="dino-link">
+                    <img src="https://dinozavrikus.ru/atlas-thumbnails/amazonsaurus-1a9d97514500.webp" alt="Шунозавр" class="dino-img">
+                    <h3>Шунозавр</h3>
+                </a>
+                <p>Травоїдний • Юрський період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Шунозавр', 'https://dinozavrikus.ru/atlas-thumbnails/amazonsaurus-1a9d97514500.webp', 'Травоїдний • Юрський період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 34. Ютараптор -->
+            <div class="dino-card">
+                <a href="utahraptor.html" class="dino-link">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d6/Utahraptor_Restoration.png?utm_source=uk.wikipedia.org&utm_campaign=index&utm_content=original" alt="Ютараптор" class="dino-img">
+                    <h3>Ютараптор</h3>
+                </a>
+                <p>Хижак • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Ютараптор', 'https://upload.wikimedia.org/wikipedia/commons/d/d6/Utahraptor_Restoration.png?utm_source=uk.wikipedia.org&utm_campaign=index&utm_content=original', 'Хижак • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 35. Ютираннус -->
+            <div class="dino-card">
+                <a href="yutyrannus.html" class="dino-link">
+                    <img src="https://i.redd.it/for-the-people-who-love-favor-the-yutyrannus-why-is-it-v0-0cgit518tvw91.jpg?width=670&format=pjpg&auto=webp&s=fedc31a5ce27fedd7177b4fc5dcddf1b86d48b7c" alt="Ютираннус" class="dino-img">
+                    <h3>Ютираннус</h3>
+                </a>
+                <p>Хижак • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Ютираннус', 'https://i.redd.it/for-the-people-who-love-favor-the-yutyrannus-why-is-it-v0-0cgit518tvw91.jpg?width=670&format=pjpg&auto=webp&s=fedc31a5ce27fedd7177b4fc5dcddf1b86d48b7c', 'Хижак • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+            <!-- 36. Ямацератопс -->
+            <div class="dino-card">
+                <a href="yamaceratops.html" class="dino-link">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Yamaceratops_BW.jpg?utm_source=ru.wikipedia.org&utm_campaign=index&utm_content=original" alt="Ямацератопс" class="dino-img">
+                    <h3>Ямацератопс</h3>
+                </a>
+                <p>Травоїдний • Крейдовий період</p>
+                <button class="compare-btn" onclick="toggleCompare(this, 'Ямацератопс', 'https://upload.wikimedia.org/wikipedia/commons/8/8e/Yamaceratops_BW.jpg?utm_source=ru.wikipedia.org&utm_campaign=index&utm_content=original', 'Травоїдний • Крейдовий період')">⚖️ Порівняти</button>
+            </div>
+
+        </div>
+<!-- ================= МИНИ-ИГРА: РАСКОПКИ ================= -->
+<!-- ================= МІНІ-ГРА: РОЗКОПКИ ================= -->
+<section class="game-section">
+  <h2>🦴 Міні-гра: Палеонтологічні Розкопки</h2>
+  <p>Клікай по блоках породи, щоб розкопати скам'янілості, поки не закінчилися кліки!</p>
+
+  <!-- Выбор сложности -->
+  <div class="difficulty-picker">
+    <button type="button" class="diff-btn active" onclick="setDifficulty('easy')">🟢 Легкий (5x5)</button>
+    <button type="button" class="diff-btn" onclick="setDifficulty('normal')">🟡 Нормальний (10x10)</button>
+    <button type="button" class="diff-btn" onclick="setDifficulty('hard')">🔴 Складний (15x15)</button>
+  </div>
+
+  <div class="game-status">
+    <div>Знахідки: <span id="gameFound">0</span> / <span id="gameTotal">5</span> 🦴</div>
+    <div>Залишилося кліків: <span id="gameClicks">10</span> ⛏️</div>
+  </div>
+
+  <div id="fossilGrid" class="fossil-grid"></div>
+
+  <!-- Результаты игры -->
+  <div id="gameWinBox" class="game-win-box" style="display: none;">
+    <span id="gameWinText">🎉 Ура! Ви повністю розкопали стародавнього динозавра!</span>
+    <br>
+    <button type="button" class="quiz-btn" onclick="initFossilGame()" style="margin-top: 10px;">Грати знову 🔄</button>
+  </div>
+</section>
+  <!-- МОДАЛЬНОЕ ОКНО СРАВНЕНИЯ -->
+    <div id="compareModal" class="modal" style="display: none;">
+        <div class="compare-modal-content">
+            <button class="compare-close-btn" onclick="closeCompareModal()">✕</button>
+            
+            <h2 style="margin: 0; text-align: center; color: #22c55e;">⚖️ Порівняння динозаврів</h2>
+
+            <div class="compare-grid">
+                <!-- Динозавр 1 -->
+                <div class="compare-card">
+                    <img id="compImg1" src="" alt="Динозавр 1">
+                    <h3 id="compName1" style="margin: 8px 0; color: #ffffff;"></h3>
+                    <span id="compType1" style="color: #94a3b8; font-size: 14px;"></span>
+
+                    <ul class="stats-list">
+                        <li>Довжина: <strong id="compLen1">-</strong></li>
+                        <li>Вага: <strong id="compWeight1">-</strong></li>
+                        <li>Швидкість: <strong id="compSpeed1">-</strong></li>
+                        <li>Сила укусу: <strong id="compBite1">-</strong></li>
+                        <li>Період: <strong id="compPeriod1">-</strong></li>
+                    </ul>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #ef4444;">VS</div>
+
+                <!-- Динозавр 2 -->
+                <div class="compare-card">
+                    <img id="compImg2" src="" alt="Динозавр 2">
+                    <h3 id="compName2" style="margin: 8px 0; color: #ffffff;"></h3>
+                    <span id="compType2" style="color: #94a3b8; font-size: 14px;"></span>
+
+                    <ul class="stats-list">
+                        <li>Довжина: <strong id="compLen2">-</strong></li>
+                        <li>Вага: <strong id="compWeight2">-</strong></li>
+                        <li>Швидкість: <strong id="compSpeed2">-</strong></li>
+                        <li>Сила укусу: <strong id="compBite2">-</strong></li>
+                        <li>Період: <strong id="compPeriod2">-</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="quiz-section">
+  <h2>🦖 Викторина: Який ти динозавр?</h2>
+  <div id="quizContainer" class="quiz-container">
+    <div id="quizQuestionBox">
+      <div class="quiz-progress" id="quizProgress">Питання 1 з 15</div>
+      <h3 id="quizQuestionText">Завантаження питання...</h3>
+      <div id="quizOptions" class="quiz-options"></div>
+    </div>
+    
+    <div id="quizResultBox" class="quiz-result-box" style="display: none;">
+      <h3>Вітаємо! Ти:</h3>
+      <h2 id="quizResultName" class="dino-result-title"></h2>
+      <img id="quizResultImg" src="" alt="Динозавр" class="quiz-result-img">
+      <p id="quizResultDesc"></p>
+      <div class="quiz-result-buttons">
+        <a id="quizResultLink" href="#" class="quiz-btn">Читати про себе</a>
+        <button type="button" onclick="restartQuiz()" class="quiz-btn secondary">Пройти знову 🔄</button>
+      </div>
+    </div>
+  </div>
+</section>
+    </main>
+
+    <footer>
+        <p>© Енциклопедія Динозаврів</p>
+    </footer>
+
+<script>
+    // ==========================================
+// 1. БАЗА ДАННЫХ ДИНОЗАВРОВ (КРАТКАЯ И ПОДРОБНАЯ)
+// ==========================================
+
+// Описание видов для быстрого просмотра
+const dinoData = {
+  "Абелізавр": { desc: "Хижий динозавр пізнього крейдового періоду з масивним черепом і короткими передніми лапами.", diet: "🥩 Хижак" },
+  "Алозавр": { desc: "Один із найнебезпечніших хижаків юрського періоду з гострими зубами та сильними кігтями.", diet: "🥩 Хижак" },
+  "Анкілозавр": { desc: "Броньований гігант із важкою кістяною булавою на хвості для захисту від хижаків.", diet: "🌿 Травоїдний" },
+  "Апатозавр": { desc: "Величезний зауропод із довгою шиєю та хвостом, який жив у юрському періоді.", diet: "🌿 Травоїдний" },
+  "Барионікс": { desc: "Спінозаврид із довгими щелепами та великим вигнутим кігтем для ловлі риби.", diet: "🥩 Хижак" },
+  "Брахіозавр": { desc: "Гігантський зауропод із довгою шиєю, що харчувався листям високих дерев.", diet: "🌿 Травоїдний" },
+  "Карнотавр": { desc: "Швидкий хижак із короткими рогами над очима та дуже редукованими передніми лапами.", diet: "🥩 Хижак" },
+  "Цератозавр": { desc: "Юрський хижак із характерним рогом на носі та рядком дрібних щитків вздовж спини.", diet: "🥩 Хижак" },
+  "Чаоянзавр": { desc: "Один із найдавніших примітивних рогатих динозаврів (маргіноцефалів) з Китаю.", diet: "🌿 Травоїдний" },
+  "Компсогнат": { desc: "Крихітний і дуже прудкий хижий динозавр розміром із курку.", diet: "🥩 Хижак" },
+  "Коритозавр": { desc: "Качкодзьобий динозавр із високим шоломоподібним гребенем на голові.", diet: "🌿 Травоїдний" },
+  "Дейноніх": { desc: "Спритний хижак із гострими зубами та смертоносним вигнутим кігтем на задній лапі.", diet: "🥩 Хижак" },
+  "Диплодок": { desc: "Величезний травоїдний динозавр із надзвичайно довгим батогоподібним хвостом.", diet: "🌿 Травоїдний" },
+  "Дріозавр": { desc: "Невеликий, дуже швидкий і двоногий травоїдний динозавр юрського періоду.", diet: "🌿 Травоїдний" },
+  "Галімім": { desc: "Швидконогий страусоподібний динозавр, який пересувався на двох довгих лапах.", diet: "🍖🌿 Всеїдний" },
+  "Гіганотозавр": { desc: "Один із найбільших наземних м'ясоїдів, що переважав за розмірами тиранозавра.", diet: "🥩 Хижак" },
+  "Гадрозавр": { desc: "Класичний качкодзьобий травоїдний динозавр пізнього крейдового періоду.", diet: "🌿 Травоїдний" },
+  "Ігуанодон": { desc: "Один із перших відкритих динозаврів, що мав характерний шип на великому пальці.", diet: "🌿 Травоїдний" },
+  "Майазавра": { desc: "«Добра мати-ящірка», відома тим, що дбала про своє гніздо та вирощувала дитинчат.", diet: "🌿 Травоїдний" },
+  "Мапузавр": { desc: "Гігантський колоніальний хижак з Аргентини, родич гіганотозавра.", diet: "🥩 Хижак" },
+  "Нанукзавр": { desc: "Пернатий полярний тиранозаврид невеликого розміру, що пристосувався до холоду.", diet: "🥩 Хижак" },
+  "Нодозавр": { desc: "Травоїдний броньований динозавр із міцними кістяними пластинами, але без булави на хвості.", diet: "🌿 Травоїдний" },
+  "Овіраптор": { desc: "Перистий динозавр із беззубим дзьобом та міцними щелепами, що висиджував яйця.", diet: "🍖🌿 Всеїдний" },
+  "Пахіцефалозавр": { desc: "Динозавр із товстим куполоподібним черепом, який використовував для сутичок.", diet: "🌿 Травоїдний" },
+  "Паразауролоф": { desc: "Травоїдний ящур із довгим порожнистим гребенем, яким видавав гучні звуки.", diet: "🌿 Травоїдний" },
+  "Птеранодон": { desc: "Літаючий плазун (птерозавр) із величезним розмахом крил і довгим дзьобом.", diet: "🥩 Хижак" },
+  "Раджазавр": { desc: "Індійський хижий абелізаврид із низьким роговим виступом на лобі.", diet: "🥩 Хижак" },
+  "Шунозавр": { desc: "Зауропод юрського періоду, що мав унікальну кістяну булаву на кінчику хвоста.", diet: "🌿 Травоїдний" },
+  "Спінозавр": { desc: "Величезний хижак із характерним «вітрилом» на спині, який отлично плавав.", diet: "🥩 Хижак" },
+  "Стегозавр": { desc: "Динозавр із подвійним рядом кістяних пластин на спині та шипами на хвості.", diet: "🌿 Травоїдний" },
+  "Теризинозавр": { desc: "Дивовижний травоїдний гігант із метровими кігтями на передніх лапах.", diet: "🌿 Травоїдний" },
+  "Трицератопс": { desc: "Травоїдний гігант із трьома рогами та масивним кістковим коміром для захисту.", diet: "🌿 Травоїдний" },
+  "Тиранозавр Рекс": { desc: "Один із найбільших наземних хижаків усіх часів. Мав потужний укус.", diet: "🥩 Хижак" },
+  "Ютараптор": { desc: "Найбільший представник дромеозаврид (рапторів) із масивними кігтями.", diet: "🥩 Хижак" },
+  "Велоцираптор": { desc: "Швидкий дрібний хижак із великим серпоподібним кігтем на кожній лапі.", diet: "🥩 Хижак" },
+  "Ямацератопс": { desc: "Невеликий примітивний цератопс крейдового періоду з невеликим коміром.", diet: "🌿 Травоїдний" },
+  "Ютираннус": { desc: "Найбільший відомий оперений хижий динозавр, близький родич тиранозавра.", diet: "🥩 Хижак" }
+};
+
+// Полная база данных с точными характеристиками для сравнения
+
+const dinosaursData = {
+  allosaurus: {
+    name: "Аллозавр",
+    type: "Хижак 🥩",
+    period: "Юрський період",
+    img: "images/allosaurus.jpg",
+    length: "8.5–12 м",
+    weight: "2–4 тонни",
+    speed: "30–55 км/год",
+    bite: "3 500 – 8 700 Н"
+  },
+  ankylosaurus: {
+    name: "Анкілозавр",
+    type: "Травоїдний 🌿",
+    period: "Крейдовий період",
+    img: "images/ankylosaurus.jpg",
+    length: "6–8 м",
+    weight: "4–8 тонн",
+    speed: "10 км/год",
+    bite: "Слабкий (жувальний)"
+  },
+  apatosaurus: {
+    name: "Апатозавр",
+    type: "Травоїдний 🌿",
+    period: "Юрський період",
+    img: "images/apatosaurus.jpg",
+    length: "21–23 м",
+    weight: "16–22 тонни",
+    speed: "12–15 км/год",
+    bite: "Низька"
+  },
+  baryonyx: {
+    name: "Баріонікс",
+    type: "Хижак (рибоїд) 🥩",
+    period: "Крейдовий період",
+    img: "images/baryonyx.jpg",
+    length: "7.5–10 м",
+    weight: "1.2–2 тонни",
+    speed: "25–30 км/год",
+    bite: "Середня (риболовний затиск)"
+  },
+  brachiosaurus: {
+    name: "Брахіозавр",
+    type: "Травоїдний 🌿",
+    period: "Юрський період",
+    img: "images/brachiosaurus.jpg",
+    length: "26–30 м",
+    weight: "35–50 тонн",
+    speed: "12 км/год",
+    bite: "Низька"
+  },
+  carnotaurus: {
+    name: "Карнотавр",
+    type: "Хижак 🥩",
+    period: "Крейдовий період",
+    img: "images/carnotaurus.jpg",
+    length: "7.5–9 м",
+    weight: "1.3–2.1 тонни",
+    speed: "48–55 км/год",
+    bite: "3 000 – 6 000 Н"
+  },
+  ceratosaurus: {
+    name: "Цератозавр",
+    type: "Хижак 🥩",
+    period: "Юрський період",
+    img: "images/ceratosaurus.jpg",
+    length: "6–7 м",
+    weight: "500–1 000 кг",
+    speed: "30–40 км/год",
+    bite: "4 000 Н"
+  },
+  chaoyangosaurus: {
+    name: "Чаоянзавр",
+    type: "Травоїдний 🌿",
+    period: "Юрський період",
+    img: "images/chaoyangosaurus.jpg",
+    length: "1–1.4 м",
+    weight: "6–10 кг",
+    speed: "25 км/год",
+    bite: "Слабкий (дзьоб)"
+  },
+  compsognathus: {
+    name: "Компсогнат",
+    type: "Хижак 🥩",
+    period: "Юрський період",
+    img: "images/compsognathus.jpg",
+    length: "0.7–1.4 м",
+    weight: "0.83–3.5 кг",
+    speed: "40–60 км/год",
+    bite: "Дуже слабкий"
+  },
+  corythosaurus: {
+    name: "Коритозавр",
+    type: "Травоїдний 🌿",
+    period: "Крейдовий період",
+    img: "images/corythosaurus.jpg",
+    length: "9–10 м",
+    weight: "3–4 тонни",
+    speed: "20–30 км/год",
+    bite: "Слабкий"
+  },
+  deinonychus: {
+    name: "Дейноніх",
+    type: "Хижак 🥩",
+    period: "Крейдовий період",
+    img: "images/deinonychus.jpg",
+    length: "3.4–3.6 м",
+    weight: "73–100 кг",
+    speed: "40–50 км/год",
+    bite: "4 100 – 8 200 Н"
+  },
+  diplodocus: {
+    name: "Диплодок",
+    type: "Травоїдний 🌿",
+    period: "Юрський період",
+    img: "images/diplodocus.jpg",
+    length: "24–27 м",
+    weight: "12–16 тонн",
+    speed: "12 км/год",
+    bite: "Низька"
+  },
+  dryosaurus: {
+    name: "Дріозавр",
+    type: "Травоїдний 🌿",
+    period: "Юрський період",
+    img: "images/dryosaurus.jpg",
+    length: "2.4–4.3 м",
+    weight: "80–90 кг",
+    speed: "40 км/год",
+    bite: "Слабкий"
+  },
+  gallimimus: {
+    name: "Галлімім",
+    type: "Всеїдний 🪱",
+    period: "Крейдовий період",
+    img: "images/gallimimus.jpg",
+    length: "6–8 м",
+    weight: "440–500 кг",
+    speed: "50–80 км/год",
+    bite: "Дуже слабкий (беззубий дзьоб)"
+  },
+  giganotosaurus: {
+    name: "Гіганотозавр",
+    type: "Хижак 🥩",
+    period: "Крейдовий період",
+    img: "images/giganotosaurus.jpg",
+    length: "12–13 м",
+    weight: "6–8.5 тонн",
+    speed: "50 км/год",
+    bite: "10 000 – 13 000 Н"
+  },
+  hadrosaurus: {
+    name: "Гадрозавр",
+    type: "Травоїдний 🌿",
+    period: "Крейдовий період",
+    img: "images/hadrosaurus.jpg",
+    length: "7–10 м",
+    weight: "2–4 тонни",
+    speed: "20 км/год",
+    bite: "Слабкий"
+  },
+  iguanodon: {
+    name: "Ігуанодон",
+    type: "Травоїдний 🌿",
+    period: "Крейдовий період",
+    img: "images/iguanodon.jpg",
+    length: "9–11 м",
+    weight: "4.5–5 тонн",
+    speed: "24 км/год",
+    bite: "Середня"
+  },
+  maiasaura: {
+    name: "Майазавра",
+    type: "Травоїдний 🌿",
+    period: "Крейдовий період",
+    img: "images/maiasaura.jpg",
+    length: "9 м",
+    weight: "3–4 тонни",
+    speed: "20–25 км/год",
+    bite: "Слабкий"
+  },
+  mapusaurus: {
+    name: "Мапузавр",
+    type: "Хижак 🥩",
+    period: "Крейдовий період",
+    img: "images/mapusaurus.jpg",
+    length: "11.5–12.6 м",
+    weight: "3–5 тонн",
+    speed: "48 км/год",
+    bite: "12 000 Н"
+  },
+  nanuqsaurus: {
+    name: "Нанукзавр",
+    type: "Хижак 🥩",
+    period: "Крейдовий період",
+    img: "images/nanuqsaurus.jpg",
+    length: "6 м",
+    weight: "500–900 кг",
+    speed: "35–40 км/год",
+    bite: "15 000 Н"
+  },
+  nodosaurus: {
+    name: "Нодозавр",
+    type: "Травоїдний 🌿",
+    period: "Крейдовий період",
+    img: "images/nodosaurus.jpg",
+    length: "4–6 м",
+    weight: "1.5–3.5 тонни",
+    speed: "10–12 км/год",
+    bite: "Слабкий"
+  },
+  oviraptor: {
+    name: "Овіраптор",
+    type: "Всеїдний 🪱",
+    period: "Крейдовий період",
+    img: "images/oviraptor.jpg",
+    length: "1.6–2 м",
+    weight: "25–35 кг",
+    speed: "35–45 км/год",
+    bite: "Міцний роговий дзьоб"
+  },
+  pachycephalosaurus: {
+    name: "Пахіцефалозавр",
+    type: "Всеїдний 🪱",
+    period: "Крейдовий період",
+    img: "images/pachycephalosaurus.jpg",
+    length: "4.5 м",
+    weight: "450 кг",
+    speed: "25–30 км/год",
+    bite: "Помірний"
+  },
+  parasaurolophus: {
+    name: "Паразауролоф",
+    type: "Травоїдний 🌿",
+    period: "Крейдовий період",
+    img: "images/parasaurolophus.jpg",
+    length: "9.5–10 м",
+    weight: "2.5–4 тонни",
+    speed: "25 км/год",
+    bite: "Слабкий"
+  },
+  pteranodon: {
+    name: "Птеранодон",
+    type: "Хижак (птерозавр) 🥩",
+    period: "Крейдовий період",
+    img: "images/pteranodon.jpg",
+    length: "Розмах крил 6–7 м",
+    weight: "20–35 кг",
+    speed: "50–80 км/год (політ)",
+    bite: "Слабкий (дзьоб)"
+  },
+  rajasaurus: {
+    name: "Раджазавр",
+    type: "Хижак 🥩",
+    period: "Крейдовий період",
+    img: "images/rajasaurus.jpg",
+    length: "6.6–9 м",
+    weight: "1.5–3 тонни",
+    speed: "25–30 км/год",
+    bite: "8 000 – 10 000 Н"
+  },
+  shunosaurus: {
+    name: "Шунозавр",
+    type: "Травоїдний 🌿",
+    period: "Юрський період",
+    img: "images/shunosaurus.jpg",
+    length: "9.5–11 м",
+    weight: "3 тонни",
+    speed: "15 км/год",
+    bite: "Слабкий"
+  },
+  spinosaurus: {
+    name: "Спінозавр",
+    type: "Хижак 🥩",
+    period: "Крейдовий період",
+    img: "images/spinosaurus.jpg",
+    length: "14–18 м",
+    weight: "7–9 тонн",
+    speed: "20–25 км/год (в воді 30)",
+    bite: "12 000 – 19 000 Н"
+  },
+  stegosaurus: {
+    name: "Стегозавр",
+    type: "Травоїдний 🌿",
+    period: "Юрський період",
+    img: "images/stegosaurus.jpg",
+    length: "9 м",
+    weight: "4.5–5 тонн",
+    speed: "6–8 км/год",
+    bite: "Дуже слабкий"
+  },
+  therizinosaurus: {
+    name: "Теризинозавр",
+    type: "Травоїдний 🌿",
+    period: "Крейдовий період",
+    img: "images/therizinosaurus.jpg",
+    length: "10 м",
+    weight: "5 тонн",
+    speed: "15–20 км/год",
+    bite: "Помірний"
+  },
+  triceratops: {
+    name: "Трицератопс",
+    type: "Травоїдний 🌿",
+    period: "Крейдовий період",
+    img: "images/triceratops.jpg",
+    length: "8–9 м",
+    weight: "6–12 тонн",
+    speed: "25–32 км/год",
+    bite: "До 8 000 Н (потужне розрізання)"
+  },
+  tyrannosaurus: {
+    name: "Тиранозавр Рекс",
+    type: "Хижак 🥩",
+    period: "Крейдовий період",
+    img: "images/tyrannosaurus.jpg",
+    length: "12–13 м",
+    weight: "8.4–14 тонн",
+    speed: "20–27 км/год",
+    bite: "35 000 – 57 000 Н (наймасштабніший)"
+  },
+  utahraptor: {
+    name: "Ютараптор",
+    type: "Хижак 🥩",
+    period: "Крейдовий період",
+    img: "images/utahraptor.jpg",
+    length: "5.5–7 м",
+    weight: "500–1 000 кг",
+    speed: "40–45 км/год",
+    bite: "8 000 – 10 000 Н"
+  },
+  velociraptor: {
+    name: "Велоцираптор",
+    type: "Хижак 🥩",
+    period: "Крейдовий період",
+    img: "images/velociraptor.jpg",
+    length: "1.8–2 м",
+    weight: "15–20 кг",
+    speed: "40 км/год",
+    bite: "До 1 000 Н"
+  },
+  yamaceratops: {
+    name: "Ямацератопс",
+    type: "Травоїдний 🌿",
+    period: "Крейдовий період",
+    img: "images/yamaceratops.jpg",
+    length: "1.5 м",
+    weight: "20–30 кг",
+    speed: "25 км/год",
+    bite: "Слабкий (дзьоб)"
+  },
+  yutyrannus: {
+    name: "Ютиранус",
+    type: "Хижак 🥩",
+    period: "Крейдовий період",
+    img: "images/yutyrannus.jpg",
+    length: "9 м",
+    weight: "1.4 тонни",
+    speed: "30–35 км/год",
+    bite: "10 000 Н"
+  }
+};
+// ==========================================
+// 2. ФУНКЦИИ ФИЛЬТРАЦИИ, СОРТИРОВКИ И ПОИСКА
+// ==========================================
+
+function filterAndSortDinos() {
+  const searchInput = document.getElementById('dinoSearch')?.value.toLowerCase().trim() || '';
+  const sortValue = document.getElementById('dinoSort')?.value || 'default';
+  const epochValue = document.getElementById('epochFilter')?.value.toLowerCase() || 'all';
+  const dietValue = document.getElementById('dietFilter')?.value.toLowerCase() || 'all';
+
+  const grid = document.getElementById('dinoGrid');
+  if (!grid) return;
+
+  const cards = Array.from(grid.querySelectorAll('.dino-card'));
+  let visibleCount = 0;
+
+  cards.forEach(card => {
+    const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+    const desc = card.querySelector('p')?.textContent.toLowerCase() || '';
+
+    const matchesSearch = title.includes(searchInput) || desc.includes(searchInput);
+    const matchesEpoch = epochValue === 'all' || desc.includes(epochValue);
+    const matchesDiet = dietValue === 'all' || desc.includes(dietValue);
+
+    if (matchesSearch && matchesEpoch && matchesDiet) {
+      card.style.display = "";
+      visibleCount++;
+    } else {
+      card.style.display = "none";
+    }
+  });
+
+  cards.sort((a, b) => {
+    const nameA = a.querySelector('h3')?.textContent || '';
+    const nameB = b.querySelector('h3')?.textContent || '';
+
+    if (sortValue === 'az') return nameA.localeCompare(nameB, 'uk');
+    if (sortValue === 'za') return nameB.localeCompare(nameA, 'uk');
+    return parseInt(a.dataset.order || 0) - parseInt(b.dataset.order || 0);
+  });
+
+  cards.forEach(card => grid.appendChild(card));
+
+  const countElem = document.getElementById('searchCount');
+  if (countElem) {
+    countElem.textContent = `Знайдено: ${visibleCount} динозаврів`;
+  }
+}
+
+function filterRegions() {
+  const input = document.getElementById('regionSearch')?.value.toLowerCase().trim() || '';
+  const cards = document.querySelectorAll('.region-card');
+
+  cards.forEach(card => {
+    const searchData = (card.getAttribute('data-search') || '').toLowerCase();
+    if (searchData.includes(input)) {
+      card.style.display = "";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+
+function getRandomDino() {
+  const cards = Array.from(document.querySelectorAll('.dino-card')).filter(card => card.style.display !== 'none');
+  if (cards.length === 0) return;
+
+  const randomIndex = Math.floor(Math.random() * cards.length);
+  const targetCard = cards[randomIndex];
+
+  targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  targetCard.style.transition = 'box-shadow 0.3s, transform 0.3s';
+  targetCard.style.boxShadow = '0 0 25px #22c55e';
+  targetCard.style.transform = 'scale(1.03)';
+
+  setTimeout(() => {
+    targetCard.style.boxShadow = '';
+    targetCard.style.transform = '';
+  }, 2000);
+}
+
+// ==========================================
+// 3. ИНТЕРАКТИВНАЯ КАРТА И ЛЕГЕНДА
+// ==========================================
+
+function toggleLegend() {
+  const content = document.getElementById('legendContent');
+  const btn = document.getElementById('toggleLegendBtn');
+  if (!content || !btn) return;
+
+  content.classList.toggle('is-hidden');
+
+  if (content.classList.contains('is-hidden')) {
+    btn.innerHTML = '👁️ Показати регіони';
+  } else {
+    btn.innerHTML = '👁️ Сховати регіони';
+  }
+}
+
+function scrollToMap(regionId) {
+  const mapSection = document.getElementById('habitat-map-section');
+  if (mapSection) {
+    mapSection.scrollIntoView({ behavior: 'smooth' });
+
+    if (regionId) {
+      const targetRegion = document.getElementById(regionId);
+      if (targetRegion) {
+        setTimeout(() => {
+          targetRegion.classList.add('highlight-region');
+          setTimeout(() => targetRegion.classList.remove('highlight-region'), 2500);
+        }, 300);
+      }
+    }
+  }
+}
+
+function highlightRegionOnMap(regionKey) {
+  const mapWrapper = document.querySelector('.map-wrapper');
+  const mapImage = document.querySelector('.interactive-map');
+
+  if (!mapImage || !mapWrapper) return;
+
+  mapWrapper.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center'
+  });
+
+  const zoomSettings = {
+    'utah':         { scale: 7.0, x: '28%', y: '22%' },
+    'colorado':     { scale: 7.0, x: '24%', y: '22%' },
+    'wyoming':      { scale: 7.0, x: '26%', y: '28%' },
+    'montana':      { scale: 7.0, x: '26%', y: '32%' },
+    'north-dakota': { scale: 7.0, x: '20%', y: '32%' },
+    'south-dakota': { scale: 7.0, x: '20%', y: '28%' },
+    'kansas':       { scale: 7.0, x: '20%', y: '20%' },
+    'oklahoma':     { scale: 7.0, x: '20%', y: '15%' },
+    'new-mexico':   { scale: 7.0, x: '25%', y: '15%' },
+    'alaska':       { scale: 7.8, x: '30%', y: '40%' },
+    'alberta':      { scale: 7.8, x: '30%', y: '38%' },
+    'saskatchewan': { scale: 7.8, x: '25%', y: '38%' },
+    'east-usa':     { scale: 7.8, x: '10%', y: '20%' },
+    'argentina':    { scale: 7.5, x: '15%', y: '-35%' },
+    'portugal':     { scale: 7.2, x: '-22%', y: '25%' },
+    'spain':        { scale: 7.2, x: '-25%', y: '25%' },
+    'england':      { scale: 7.2, x: '-27%', y: '35%' },
+    'france':       { scale: 7.2, x: '-29%', y: '28%' },
+    'belgium':      { scale: 7.2, x: '-30%', y: '32%' },
+    'germany':      { scale: 7.2, x: '-32%', y: '32%' },
+    'africa':       { scale: 7.5, x: '-25%', y: '5%'  },
+    'madagascar':   { scale: 7.0, x: '-42%', y: '-20%' },
+    'china':        { scale: 7.8, x: '-40%', y: '20%' },
+    'mongolia':     { scale: 7.8, x: '-38%', y: '30%' },
+    'india':        { scale: 7.8, x: '-35%', y: '0%'  }
+  };
+
+  const config = zoomSettings[regionKey] || { scale: 2.5, x: '0%', y: '0%' };
+
+  mapImage.style.transformOrigin = 'center center';
+  mapImage.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+  mapImage.style.transform = `scale(${config.scale}) translate(${config.x}, ${config.y})`;
+
+  mapImage.onclick = function() {
+    mapImage.style.transform = 'scale(1) translate(0, 0)';
+  };
+}
+
+// ==========================================
+// СИСТЕМА СРАВНЕНИЯ ДИНОЗАВРОВ
+// ==========================================
+
+let compareList = [];
+
+
+// ==========================================
+// ДОБАВИТЬ / УДАЛИТЬ
+// ==========================================
+
+function toggleCompare(button, dinoKey) {
+
+    const dino = dinosaursData[dinoKey];
+
+    if (!dino) {
+        console.error("Динозавр не найден:", dinoKey);
+        return;
+    }
+
+
+    // Уже выбран?
+    const index = compareList.findIndex(
+        item => item.key === dinoKey
+    );
+
+
+    // ==========================================
+    // УДАЛЕНИЕ
+    // ==========================================
+
+    if (index !== -1) {
+
+        compareList.splice(index, 1);
+
+        button.classList.remove("selected");
+        button.innerText = "⚖️ Порівняти";
+
+        updateCompareCount();
+
+        return;
+    }
+
+
+    // ==========================================
+    // МАКСИМУМ 2
+    // ==========================================
+
+    if (compareList.length >= 2) {
+
+        alert("Можна обрати не більше 2 динозаврів для порівняння!");
+
+        return;
+    }
+
+
+    // ==========================================
+    // ДОБАВЛЕНИЕ
+    // ==========================================
+
+    compareList.push({
+        key: dinoKey,
+        data: dino
+    });
+
+
+    button.classList.add("selected");
+    button.innerText = "✅ Обрано";
+
+    updateCompareCount();
+}
+
+
+// ==========================================
+// СЧЁТЧИК
+// ==========================================
+
+function updateCompareCount() {
+
+    const count = document.getElementById("compareCount");
+
+    if (count) {
+        count.innerText = compareList.length;
+    }
+}
+
+
+// ==========================================
+// ЗАПОЛНЕНИЕ СЛОТА
+// ==========================================
+
+function fillCompareSlot(number, item) {
+
+    const img = document.getElementById("compImg" + number);
+    const name = document.getElementById("compName" + number);
+    const type = document.getElementById("compType" + number);
+    const length = document.getElementById("compLen" + number);
+    const weight = document.getElementById("compWeight" + number);
+    const speed = document.getElementById("compSpeed" + number);
+    const bite = document.getElementById("compBite" + number);
+    const period = document.getElementById("compPeriod" + number);
+
+
+    // Пустой слот
+    if (!item) {
+
+        if (img) {
+            img.src = "";
+            img.style.display = "none";
+        }
+
+        if (name) name.innerText = "Не обрано";
+        if (type) type.innerText = "Оберіть динозавра";
+        if (length) length.innerText = "-";
+        if (weight) weight.innerText = "-";
+        if (speed) speed.innerText = "-";
+        if (bite) bite.innerText = "-";
+        if (period) period.innerText = "-";
+
+        return;
+    }
+
+
+    const dino = item.data;
+
+
+    if (img) {
+        img.src = dino.img;
+        img.alt = dino.name;
+        img.style.display = "block";
+    }
+
+    if (name) name.innerText = dino.name;
+    if (type) type.innerText = dino.type;
+    if (length) length.innerText = dino.length;
+    if (weight) weight.innerText = dino.weight;
+    if (speed) speed.innerText = dino.speed;
+    if (bite) bite.innerText = dino.bite;
+    if (period) period.innerText = dino.period;
+}
+
+
+// ==========================================
+// ОТКРЫТЬ СРАВНЕНИЕ
+// ==========================================
+
+function openCompareModal() {
+
+    const modal = document.getElementById("compareModal");
+
+    if (!modal) {
+        console.error("Не найдено окно #compareModal");
+        return;
+    }
+
+
+    fillCompareSlot(
+        1,
+        compareList[0] || null
+    );
+
+    fillCompareSlot(
+        2,
+        compareList[1] || null
+    );
+
+
+    modal.style.display = "block";
+}
+
+
+// ==========================================
+// ЗАКРЫТЬ
+// ==========================================
+
+function closeCompareModal() {
+
+    const modal = document.getElementById("compareModal");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+
+// ==========================================
+// ОЧИСТИТЬ
+// ==========================================
+
+function clearCompareList() {
+
+    compareList = [];
+
+    updateCompareCount();
+
+    document.querySelectorAll(".compare-btn").forEach(button => {
+
+        button.classList.remove("selected");
+        button.innerText = "⚖️ Порівняти";
+
+    });
+
+    fillCompareSlot(1, null);
+    fillCompareSlot(2, null);
+
+    closeCompareModal();
+}
+// ==========================================
+// 6. ИНИЦИАЛИЗАЦИЯ И ОБРАБОТЧИКИ СОБЫТИЙ
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", function() {
+  // 1. Присвоение индекса карточкам и создание кнопки быстрого просмотра (глаз)
+  let cards = document.querySelectorAll('.dino-grid .dino-card');
+  cards.forEach((card, index) => {
+    card.dataset.order = index;
+
+    const previewBtn = document.createElement('button');
+    previewBtn.className = 'quick-view-btn';
+    previewBtn.innerHTML = '👁️';
+    previewBtn.title = 'Швидкий перегляд';
+    card.appendChild(previewBtn);
+
+    previewBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const title = card.querySelector('h3')?.textContent.trim() || '';
+      const img = card.querySelector('img')?.src || '';
+      const typeText = card.querySelector('p')?.textContent.trim() || '';
+
+      const fallbackDesc = `Це ${typeText.toLowerCase()}. Перейдіть на повноцінну сторінку, щоб дізнатися більше подробиць про цей вид.`;
+
+      const titleElem = document.getElementById('dinoModalTitle');
+      const imgElem = document.getElementById('dinoModalImg');
+      const typeElem = document.getElementById('dinoModalType');
+      const descElem = document.getElementById('dinoModalDesc');
+
+      if (titleElem) titleElem.textContent = title;
+      if (imgElem) imgElem.src = img;
+      if (typeElem) typeElem.textContent = (typeof dinoData !== 'undefined' && dinoData[title]?.diet) || typeText;
+      if (descElem) descElem.textContent = (typeof dinoData !== 'undefined' && dinoData[title]?.desc) || fallbackDesc;
+
+      const dinoModal = document.getElementById('dinoModal');
+      if (dinoModal) {
+        dinoModal.style.display = "flex";
+      }
+    });
+  });
+
+  // Закрытие dinoModal по клику на его крестик
+  const dinoModal = document.getElementById('dinoModal');
+  if (dinoModal) {
+    const dinoCloseBtn = dinoModal.querySelector('.close-btn, .modal-close, .close');
+    if (dinoCloseBtn) {
+      dinoCloseBtn.addEventListener('click', closeDinoModal);
+    }
+  }
+
+  // 2. Галерея / Модальные изображения
+  const imageModal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImage');
+  const closeBtn = document.querySelector('.modal-close');
+  const modalTriggers = document.querySelectorAll('.image-modal-trigger');
+
+  modalTriggers.forEach(img => {
+    img.addEventListener('click', function() {
+      if (imageModal && modalImg) {
+        imageModal.style.display = "flex";
+        modalImg.src = this.src;
+        modalImg.alt = this.alt;
+      }
+    });
+  });
+
+  if (closeBtn && imageModal) {
+    closeBtn.addEventListener('click', () => imageModal.style.display = "none");
+  }
+
+  // 3. Закрытие окон по клику на затемнение (фон)
+  window.addEventListener('click', function(event) {
+    const dinoModal = document.getElementById('dinoModal');
+    const compareModal = document.getElementById('compareModal');
+
+    if (event.target === dinoModal) closeDinoModal();
+    if (event.target === imageModal && imageModal) imageModal.style.display = "none";
+    if (event.target === compareModal && typeof closeCompareModal === 'function') closeCompareModal();
+  });
+
+  // 4. Закрытие по клавише Escape
+  document.addEventListener('keydown', function(event) {
+    if (event.key === "Escape") {
+      closeDinoModal();
+      if (imageModal) imageModal.style.display = "none";
+      if (typeof closeCompareModal === 'function') closeCompareModal();
+    }
+  });
+});
+
+// Функция закрытия окна быстрого просмотра
+function closeDinoModal() {
+  const dinoModal = document.getElementById('dinoModal');
+  if (dinoModal) {
+    dinoModal.style.display = "none";
+  }
+}
+
+// Кнопка «Наверх»
+window.onscroll = function() {
+  const btn = document.getElementById("scrollTopBtn");
+  if (btn) {
+    btn.style.display = (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) ? "block" : "none";
+  }
+};
+// ==========================================
+// 5. ЛОГИКА ОКНА СРАВНЕНИЯ
+// ==========================================
+
+/**
+ * Функция для заполнения и открытия модального окна сравнения двух динозавров
+ * @param {string} dino1Key - Ключ/ID первого динозавра в базе данных
+ * @param {string} dino2Key - Ключ/ID второго динозавра в базе данных
+ */
+function openCompareModal(dino1Key, dino2Key) {
+  // Находим данные динозавров из вашей базы данных dinosaursData
+  const d1 = (typeof dinosaursData !== 'undefined') ? dinosaursData[dino1Key] : null;
+  const d2 = (typeof dinosaursData !== 'undefined') ? dinosaursData[dino2Key] : null;
+
+  if (!d1 || !d2) {
+    console.error("Не вдалося знайти даних для порівняння / Динозавры не найдены:", dino1Key, dino2Key);
+    return;
+  }
+
+  // --- Заполняем данные 1-го динозавра ---
+  const img1 = document.getElementById("compImg1");
+  if (img1) img1.src = d1.img || "";
+
+  const type1 = document.getElementById("compType1");
+  if (type1) type1.textContent = d1.type || "";
+
+  document.getElementById("compName1").textContent = d1.name || "";
+  document.getElementById("compLen1").textContent = d1.length || "";
+  document.getElementById("compWeight1").textContent = d1.weight || "";
+  document.getElementById("compSpeed1").textContent = d1.speed || "";
+  document.getElementById("compBite1").textContent = d1.bite || "";
+  document.getElementById("compPeriod1").textContent = d1.period || "";
+
+  // --- Заполняем данные 2-го динозавра ---
+  const img2 = document.getElementById("compImg2");
+  if (img2) img2.src = d2.img || "";
+
+  const type2 = document.getElementById("compType2");
+  if (type2) type2.textContent = d2.type || "";
+
+  document.getElementById("compName2").textContent = d2.name || "";
+  document.getElementById("compLen2").textContent = d2.length || "";
+  document.getElementById("compWeight2").textContent = d2.weight || "";
+  document.getElementById("compSpeed2").textContent = d2.speed || "";
+  document.getElementById("compBite2").textContent = d2.bite || "";
+  document.getElementById("compPeriod2").textContent = d2.period || "";
+
+  // Открываем модальное окно
+  const compareModal = document.getElementById("compareModal");
+  if (compareModal) {
+    compareModal.style.display = "flex";
+  }
+}
+
+/**
+ * Функция закрытия модального окна сравнения
+ */
+function closeCompareModal() {
+  const compareModal = document.getElementById("compareModal");
+  if (compareModal) {
+    compareModal.style.display = "none";
+  }
+}
+
+// ==========================================
+// ОБРАБОТЧИКИ СОБЫТИЙ (EVENT LISTENERS)
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", function() {
+  const compareModal = document.getElementById("compareModal");
+
+  // Закрытие при клике на затемненный фон (вне самого окна)
+  if (compareModal) {
+    compareModal.addEventListener('click', function(event) {
+      if (event.target === compareModal) {
+        closeCompareModal();
+      }
+    });
+  }
+
+  // Закрытие при нажатии на клавишу Escape
+  document.addEventListener('keydown', function(event) {
+    if (event.key === "Escape") {
+      closeCompareModal();
+    }
+  });
+});
+// Вопросы викторины
+const quizQuestions = [
+  {
+    q: "Яка твоя ідеальна поведінка на перерві або відпочинку?",
+    a: [
+      { text: "Спокійно їм смаколики десь у куточку", dino: "ankylosaurus" },
+      { text: "Починаю носитися як божевільний", dino: "velociraptor" },
+      { text: "Командую всіма і показую, хто тут головний", dino: "tyrannosaurus" },
+      { text: "Мрію про море та плавання", dino: "spinosaurus" }
+    ]
+  },
+  {
+    q: "Твій улюблений тип їжі:",
+    a: [
+      { text: "Соковитий м'ясний стейк або бургер", dino: "giganotosaurus" },
+      { text: "Риба та морепродукти", dino: "baryonyx" },
+      { text: "Салатики, фрукти, зелень", dino: "brachiosaurus" },
+      { text: "Всілякі горішки та насіння", dino: "chaoyangosaurus" }
+    ]
+  },
+  {
+    q: "Як ти реагуєш, якщо хтось намагається тебе зачепити?",
+    a: [
+      { text: "Одразу даю потужну відсіч!", dino: "triceratops" },
+      { text: "Хитрую і кличу друзів на допомогу", dino: "deinonychus" },
+      { text: "Ігнорую, мов броню навколо себе надів", dino: "nodosaurus" },
+      { text: "Втікаю так швидко, що тільки п'яти миготять", dino: "gallimimus" }
+    ]
+  },
+  {
+    q: "Твоя суперздібність у компанії:",
+    a: [
+      { text: "Я найгучніший, мене чути здалеку!", dino: "parasaurolophus" },
+      { text: "Я найстильніший і з крутою зачіскою/гребенем", dino: "corythosaurus" },
+      { text: "Я дуже спокійний і турботливий", dino: "maiasaura" },
+      { text: "Я люблю дивитися на всіх звисока", dino: "diplodocus" }
+    ]
+  },
+  {
+    q: "Який стиль життя тобі ближчий?",
+    a: [
+      { text: "Нічний мисливець і задира", dino: "utahraptor" },
+      { text: "Люблю холод і зимовий вайб", dino: "nanuqsaurus" },
+      { text: "Люблю тепло, сонце і пляж", dino: "ouranosaurus" },
+      { text: "Пустелі, пригоди і сухий клімат", dino: "yamaceratops" }
+    ]
+  },
+  {
+    q: "Твій улюблений спорт або активність:",
+    a: [
+      { text: "Спринт або біг з перешкодами", dino: "dryosaurus" },
+      { text: "Бокс або східні єдиноборства", dino: "pachycephalosaurus" },
+      { text: "Фехтування або робота з гострими предметами", dino: "therizinosaurus" },
+      { text: "Водне поло або плавання", dino: "pteranodon" }
+    ]
+  },
+  {
+    q: "Як ти ставишся до висоти?",
+    a: [
+      { text: "Обожнюю! Хотілося б уміти літати", dino: "pteranodon" },
+      { text: "Я і так найвищий серед усіх", dino: "apatosaurus" },
+      { text: "Краще твердо стояти на землі", dino: "shunosaurus" },
+      { text: "Мені байдуже, аби їжа була поруч", dino: "iguanodon" }
+    ]
+  },
+  {
+    q: "Твій характер у кількох словах:",
+    a: [
+      { text: "Упертий і непробивний", dino: "ceratosaurus" },
+      { text: "Енергійний і хитрий", dino: "compsognathus" },
+      { text: "Загадковий і небезпечний", dino: "carnotaurus" },
+      { text: "Королівський і гордий", dino: "rajasaurus" }
+    ]
+  },
+  {
+    q: "Що ти зробиш, якщо побачиш щось невідоме?",
+    a: [
+      { text: "Одразу спробую це вкусити!", dino: "allosaurus" },
+      { text: "Уважно роздивлюсь здалеку", dino: "hadrosaurus" },
+      { text: "Захищу своїх друзів спиною", dino: "stegosaurus" },
+      { text: "Швидко сховаюся в кущах", dino: "oviraptor" }
+    ]
+  },
+  {
+    q: "Який аксесуар ти б обрав?",
+    a: [
+      { text: "Шикарне пухнасте пальто", dino: "yutyrannus" },
+      { text: "Круті роги або шолом", dino: "triceratops" },
+      { text: "Величезне віяло для спеки", dino: "mapusaurus" },
+      { text: "Броньованый жилет", dino: "ankylosaurus" }
+    ]
+  },
+  {
+    q: "Твій ідеальний вихідний:",
+    a: [
+      { text: "Поїздка на річку або озеро", dino: "spinosaurus" },
+      { text: "Прогулянка лісом або парком", dino: "dryosaurus" },
+      { text: "Сон і смачна їжа цілий день", dino: "apatosaurus" },
+      { text: "Активні командні ігри", dino: "velociraptor" }
+    ]
+  },
+  {
+    q: "Твоя головна фішка:",
+    a: [
+      { text: "Величезні пазурі", dino: "therizinosaurus" },
+      { text: "Міцна голова", dino: "pachycephalosaurus" },
+      { text: "Хвіст з шипами/булавою", dino: "shunosaurus" },
+      { text: "Гострі як бритва зуби", dino: "tyrannosaurus" }
+    ]
+  },
+  {
+    q: "Як ти поводишся в команді?",
+    a: [
+      { text: "Я одиночка, працюю сам", dino: "giganotosaurus" },
+      { text: "Я чітко виконую розроблену тактику", dino: "deinonychus" },
+      { text: "Душа компанії, створюю шум", dino: "parasaurolophus" },
+      { text: "Захищаю слабших", dino: "maiasaura" }
+    ]
+  },
+  {
+    q: "Якби ти мав зброю, це було б:",
+    a: [
+      { text: "Важкий щит", dino: "nodosaurus" },
+      { text: "Дворучний меч", dino: "allosaurus" },
+      { text: "Лук або метальні ножі", dino: "compsognathus" },
+      { text: "Молот или булава", dino: "ankylosaurus" }
+    ]
+  },
+  {
+    q: "Твій головний девіз у житті:",
+    a: [
+      { text: "Бачу ціль — не бачу перешкод!", dino: "carnotaurus" },
+      { text: "Главное — затишок і безпека", dino: "stegosaurus" },
+      { text: "Швидкість — це моє друге ім'я", dino: "gallimimus" },
+      { text: "Я тут найголовніший хижак!", dino: "tyrannosaurus" }
+    ]
+  }
+];
+
+let currentQuestion = 0;
+let quizScores = {};
+
+function initQuiz() {
+  currentQuestion = 0;
+  quizScores = {};
+  showQuestion();
+}
+
+function showQuestion() {
+  const qBox = document.getElementById('quizQuestionBox');
+  const rBox = document.getElementById('quizResultBox');
+  if (!qBox || !rBox) return;
+
+  qBox.style.display = 'block';
+  rBox.style.display = 'none';
+
+  const qData = quizQuestions[currentQuestion];
+  document.getElementById('quizProgress').innerText = `Питання ${currentQuestion + 1} з ${quizQuestions.length}`;
+  document.getElementById('quizQuestionText').innerText = qData.q;
+
+  const optionsContainer = document.getElementById('quizOptions');
+  optionsContainer.innerHTML = '';
+
+  qData.a.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt-btn';
+    btn.innerText = opt.text;
+    btn.onclick = () => selectQuizAnswer(opt.dino);
+    optionsContainer.appendChild(btn);
+  });
+}
+
+function selectQuizAnswer(dinoKey) {
+  quizScores[dinoKey] = (quizScores[dinoKey] || 0) + 1;
+  currentQuestion++;
+
+  if (currentQuestion < quizQuestions.length) {
+    showQuestion();
+  } else {
+    showQuizResult();
+  }
+}
+
+function showQuizResult() {
+  document.getElementById('quizQuestionBox').style.display = 'none';
+  const rBox = document.getElementById('quizResultBox');
+  rBox.style.display = 'block';
+
+  // Находим динозавра с максимальным количеством очков
+  let winningDinoKey = 'tyrannosaurus';
+  let maxScore = -1;
+
+  for (const key in quizScores) {
+    if (quizScores[key] > maxScore) {
+      maxScore = quizScores[key];
+      winningDinoKey = key;
+    }
+  }
+
+  // Берём данные из твоего существующего объекта dinosaursData
+  const dino = dinosaursData[winningDinoKey] || {
+    name: "Тиранозавр Рекс",
+    img: "https://dinoinfo.ru/wp-content/uploads/2020/09/IMG_20210105_203922.jpg",
+    type: "Хижак"
+  };
+
+  document.getElementById('quizResultName').innerText = dino.name;
+  document.getElementById('quizResultImg').src = dino.img;
+  document.getElementById('quizResultDesc').innerText = `Ти справжній ${dino.name}! (${dino.type}). Твій вибір у вікторині точно це підтверджує.`;
+  
+  const linkBtn = document.getElementById('quizResultLink');
+  linkBtn.href = `${winningDinoKey}.html`;
+}
+
+function restartQuiz() {
+  initQuiz();
+}
+
+// Запускаем викторину при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('quizContainer')) {
+    initQuiz();
+  }
+});
+/* =========================================================
+   1. ТЕМНАЯ / СВЕТЛАЯ ТЕМА
+   ========================================================= */
+const savedTheme = localStorage.getItem('siteTheme') || 'dark';
+
+if (savedTheme === 'light') {
+  document.body.classList.add('light-theme');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const themeBtn = document.getElementById('themeToggleBtn');
+  const themeIcon = document.getElementById('themeIcon');
+  const themeText = document.getElementById('themeText');
+
+  function updateThemeUI() {
+    const isLight = document.body.classList.contains('light-theme');
+    if (themeIcon) themeIcon.innerText = isLight ? '☀️️' : '🌙';
+    if (themeText) themeText.innerText = isLight ? 'Светлая тема' : 'Темная тема';
+  }
+
+  updateThemeUI();
+
+  if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('light-theme');
+      const isLight = document.body.classList.contains('light-theme');
+      localStorage.setItem('siteTheme', isLight ? 'light' : 'dark');
+      updateThemeUI();
+    });
+  }
+
+  // Запуск логики Избранного и Игры
+  initFavorites();
+  initFossilGame();
+});
+
+/* =========================================================
+   2. ИЗБРАННОЕ (FAVORITES)
+   ========================================================= */
+let favorites = JSON.parse(localStorage.getItem('dinoFavorites')) || [];
+let onlyFavFilter = false;
+
+function initFavorites() {
+  const cards = document.querySelectorAll('.dino-grid .dino-card');
+
+  cards.forEach(card => {
+    // Получаем ключ динозавра из ссылки или заголовка
+    const link = card.querySelector('a')?.getAttribute('href') || '';
+    const dinoKey = link.replace('.html', '').toLowerCase() || card.querySelector('h3')?.textContent.trim();
+
+    if (!dinoKey) return;
+
+    card.dataset.dinoKey = dinoKey;
+
+    // Добавляем кнопку-звездочку
+    let favBtn = card.querySelector('.fav-btn');
+    if (!favBtn) {
+      favBtn = document.createElement('button');
+      favBtn.className = 'fav-btn';
+      favBtn.title = 'Добавить в избранное';
+      favBtn.innerHTML = '⭐';
+      card.appendChild(favBtn);
+    }
+
+    if (favorites.includes(dinoKey)) {
+      favBtn.classList.add('active');
+    }
+
+    favBtn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleFavorite(dinoKey, favBtn);
+    };
+  });
+
+  updateFavCount();
+}
+
+function toggleFavorite(dinoKey, btn) {
+  const index = favorites.indexOf(dinoKey);
+
+  if (index !== -1) {
+    favorites.splice(index, 1);
+    btn.classList.remove('active');
+  } else {
+    favorites.push(dinoKey);
+    btn.classList.add('active');
+  }
+
+  localStorage.setItem('dinoFavorites', JSON.stringify(favorites));
+  updateFavCount();
+
+  if (onlyFavFilter) {
+    applyFavFilter();
+  }
+}
+
+function updateFavCount() {
+  const favCountElem = document.getElementById('favCount');
+  if (favCountElem) {
+    favCountElem.innerText = favorites.length;
+  }
+}
+
+function toggleFavFilter() {
+  onlyFavFilter = !onlyFavFilter;
+  const filterBtn = document.getElementById('favFilterBtn');
+  
+  if (filterBtn) {
+    filterBtn.classList.toggle('active', onlyFavFilter);
+  }
+
+  applyFavFilter();
+}
+
+function applyFavFilter() {
+  const cards = document.querySelectorAll('.dino-grid .dino-card');
+  
+  cards.forEach(card => {
+    const key = card.dataset.dinoKey;
+    if (onlyFavFilter) {
+      card.style.display = favorites.includes(key) ? 'block' : 'none';
+    } else {
+      card.style.display = 'block';
+    }
+  });
+}
+
+/* =========================================================
+   3. МИНИ-ИГРА: РАСКОПКИ ОКАМЕНЕЛОСТЕЙ (3 УРОВНЯ СЛОЖНОСТИ)
+   ========================================================= */
+
+/* =========================================================
+   3. МІНІ-ГРА: РОЗКОПКИ СКАМ'ЯНІЛОСТЕЙ
+   ========================================================= */
+
+const DIFFICULTY_SETTINGS = {
+  easy: { cols: 5, rows: 5, clicks: 10, fossils: 5, tileSize: '40px', fontSize: '20px' },
+  normal: { cols: 10, rows: 10, clicks: 20, fossils: 8, tileSize: '32px', fontSize: '16px' },
+  hard: { cols: 15, rows: 15, clicks: 25, fossils: 12, tileSize: '26px', fontSize: '12px' }
+};
+
+let currentDiff = 'easy';
+let fossilPositions = [];
+let foundCount = 0;
+let remainingClicks = 0;
+let isGameOver = false;
+
+function setDifficulty(level) {
+  currentDiff = level;
+  
+  document.querySelectorAll('.diff-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  if (window.event && window.event.target) {
+    window.event.target.classList.add('active');
+  }
+
+  initFossilGame();
+}
+
+function initFossilGame() {
+  const gridElem = document.getElementById('fossilGrid');
+  const winBox = document.getElementById('gameWinBox');
+  if (!gridElem) return;
+
+  gridElem.innerHTML = '';
+  if (winBox) winBox.style.display = 'none';
+
+  // ОБЯЗАТЕЛЬНЫЕ СТРОКИ (без них config не работает):
+  const config = DIFFICULTY_SETTINGS[currentDiff];
+  const totalTiles = config.cols * config.rows;
+
+  foundCount = 0;
+  remainingClicks = config.clicks;
+  isGameOver = false;
+
+  document.getElementById('gameFound').innerText = '0';
+  document.getElementById('gameTotal').innerText = config.fossils;
+  document.getElementById('gameClicks').innerText = remainingClicks;
+
+  // Настройка CSS-сетки
+  gridElem.style.gridTemplateColumns = `repeat(${config.cols}, ${config.tileSize})`;
+
+  // Генерация позиций костей
+  fossilPositions = [];
+  while (fossilPositions.length < config.fossils) {
+    const randPos = Math.floor(Math.random() * totalTiles);
+    if (!fossilPositions.includes(randPos)) {
+      fossilPositions.push(randPos);
+    }
+  }
+
+  // Создаем тайлы
+  for (let i = 0; i < totalTiles; i++) {
+    const tile = document.createElement('div');
+    tile.className = 'fossil-tile';
+    tile.style.width = config.tileSize;
+    tile.style.height = config.tileSize;
+    tile.style.fontSize = config.fontSize;
+    tile.innerText = '🪨';
+
+    tile.onclick = () => digTile(tile, i);
+    gridElem.appendChild(tile);
+  }
+}
+
+function digTile(tile, index) {
+  if (isGameOver || tile.classList.contains('dug')) return;
+
+  const config = DIFFICULTY_SETTINGS[currentDiff];
+  tile.classList.add('dug');
+  
+  remainingClicks--;
+  document.getElementById('gameClicks').innerText = remainingClicks;
+
+  if (fossilPositions.includes(index)) {
+    tile.classList.add('found');
+    tile.innerText = '🦴';
+    foundCount++;
+    document.getElementById('gameFound').innerText = foundCount;
+  } else {
+    tile.innerText = '⏳';
+  }
+
+  // Проверка условий победы или поражения
+  const winBox = document.getElementById('gameWinBox');
+  const winText = document.getElementById('gameWinText');
+
+  if (foundCount === config.fossils) {
+    isGameOver = true;
+    if (winBox && winText) {
+      winBox.className = 'game-win-box win';
+      winText.innerText = '🎉 Перемога! Ви знайшли всі скам\'янілості!';
+      winBox.style.display = 'block';
+    }
+  } else if (remainingClicks <= 0) {
+    isGameOver = true;
+    if (winBox && winText) {
+      winBox.className = 'game-win-box lose';
+      winText.innerText = `💥 Кліки закінчилися! Ви знайшли ${foundCount} з ${config.fossils} скам'янілостей. Спробуйте ще раз!`;
+      winBox.style.display = 'block';
+    }
+  }
+} 
+</script>
+    <!-- Модальное окно для просмотра карты и изображений -->
+    <div id="imageModal" class="modal" style="display: none;">
+        <span class="modal-close" onclick="closeImageModal()">&times; Закрити</span>
+        <img class="modal-content" id="modalImage" alt="Збільшене зображення">
+    </div>
+
+</body>
+</html>
